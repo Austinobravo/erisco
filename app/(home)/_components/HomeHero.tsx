@@ -1,3 +1,4 @@
+import Button from '@/components/Button'
 import { Phone } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
@@ -10,7 +11,7 @@ const HomeHero = () => {
                 <Image src={`/leaf.webp`} width={200} height={100} alt='leaf' className='absolute right-0 top-10' />
                 <h2 className='text-5xl font-bold text-blue-500 leading-snug'>Still Looking for the right place to get your food Items.</h2>
                 <p className='text-white'>Treat your taste buds to quality.</p>
-                <button className='py-2 w-fit items-center px-4 flex text-white bg-green-500'><Phone size={15} className='mr-1'/>Contact Us</button>
+                <Button icon={Phone} title={'Contact Us'} href=''/>
 
             </div>
             <div className='md:basis-1/2'>

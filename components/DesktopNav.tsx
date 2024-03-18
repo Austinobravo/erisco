@@ -28,7 +28,7 @@ const DesktopNav = () => {
   const [isCartToggled, setIsCartToggled] = React.useState<boolean>(false)
   return (
     <>
-      <div className='flex justify-between px-10 w-full py-5 items-center'>
+      <div className='flex justify-between fixed bg-white z-20 px-10 w-full py-5 items-center'>
         <div className='flex items-center gap-5'>
           <div>
               <Image src={`https://eriscofoodsltd.com.ng/images/logo.png`} width={100} height={100} alt='logo'/>
