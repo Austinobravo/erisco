@@ -1,6 +1,6 @@
 import React from 'react'
 import Button from './Button'
-import { Facebook, Instagram, Mail, Map, Phone, Twitter, Youtube } from 'lucide-react'
+import { Facebook, Instagram, Locate, LocateFixed, Mail, Phone, Pin, Twitter, Youtube } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -29,15 +29,15 @@ const usefulLinks = [
 ]
 const socialIcons = [
     {
-        href: '',
+        href: 'https://www.facebook.com/eriscofoods',
         icon: Facebook
     },
     {
-        href: '',
+        href: 'https://twitter.com/eriscoofficial',
         icon: Twitter
     },
     {
-        href: '',
+        href: 'https://instagram.com/eriscofoods',
         icon: Instagram
     },
     {
@@ -53,19 +53,19 @@ const contactInfo = [
             {
                 href: '',
                 icon: Phone,
-                heading: '1-001-234-5678',
+                heading: '+234 8134440000',
                 title: 'Mon - Fri 10am - 8pm'
             },
             {
                 href: '',
                 icon: Mail,
-                heading: 'admin@erisco.com',
+                heading: 'eriscofoodsltd2009@gmail.com',
                 title: 'Information & support'
             },
             {
                 href: '',
-                icon: Map,
-                heading: '3 Rockaway St., New Rochelle, NY 1080',
+                icon: LocateFixed,
+                heading: 'Plot 2, Oyeleke Street, Oregun-Alausa, Ikeja, Lagos.',
                 title: 'Main office location'
             },
         ]
@@ -76,40 +76,43 @@ const Footer = () => {
     <section>
         <div className='bg-blue-500 p-10 space-y-8'>
             <div className='text-center flex justify-center text-white text-3xl'>
-                <h3 className='w-[800px] font-bold'>Join thousands of companies,business owners & constumers who trust Erisco</h3>
+                <h3 className='md:w-[800px] md:text-base text-lg font-bold'>Join thousands of companies,business owners & constumers who trust Erisco</h3>
             </div>
             <div className='flex justify-center gap-x-2'>
                 <Button title='Call Us Now'icon={Phone} href=''/>
                 <Button title='Reach Us On Mail'icon={Mail} bgColor='bg-blue-500' border='border' href='' />
             </div>
         </div>
-        <div className='bg-black'>
-            <div>
-                <Link href='/'>
-                    <Image src={`https://eriscofoodsltd.com.ng/images/logo.png`} width={100} height={100} alt='logo'/>
-                </Link>
-                <div>
-                    <div>
-                        <p className='text-white'>Erisco Foods Limited (A subsidiary of Erisco Bonpet Group) manufacturers of tomato paste and other food products</p>
-                        <div className='flex'>
+        <div className='bg-black/90 p-10'>
+            <div className='space-y-3'>
+                <div className='w-fit '>
+                    <Link href='/'>
+                        <Image src={`https://eriscofoodsltd.com.ng/images/logo.png`} width={100} height={100} alt='logo' className=''/>
+                    </Link>
+
+                </div>
+                <div className='flex md:flex-nowrap flex-wrap gap-x-3'>
+                    <div className='md:basis-2/4 space-y-3 w-full'>
+                        <p className='text-slate-300 text-sm'>Erisco Foods Limited (A subsidiary of Erisco Bonpet Group) manufacturers of tomato paste and other food products</p>
+                        <div className='flex space-x-3 pb-5'>
                             {socialIcons.map((icon, index) => {
                                 const Icon = icon.icon
                                 return(
-                                    <Link key={index} href={icon.href} className='bg-blue-500 rounded-full text-white p-2'>
+                                    <Link key={index} href={icon.href} className='bg-blue-500 rounded-full text-white p-2 hover:scale-110'>
                                         <Icon size={15}/>
                                     </Link>
                                 )
                             }
                             )}
                         </div>
-                    </div>
-                    <div>
+                    </div>                
+                    <div className='md:basis-1/4 mr-5 md:mr-0 pb-5 '>
                         {usefulLinks.map((usefulLink, index) => (
                             <div key={index}>
-                                <h2 className='text-blue-500'>{usefulLink.name}</h2>
-                                <ul className='text-slate-500'>
+                                <h2 className='text-blue-500 pb-2 font-bold'>{usefulLink.name}</h2>
+                                <ul className='text-slate-300 space-y-3 w-fit '>
                                     {usefulLink.links.map((link, index) => (
-                                        <li key={index}>
+                                        <li key={index} className='text-sm hover:font-bold hover:text-green-500'>
                                             <Link href={link.href}>
                                                 {link.name}
                                             </Link>
@@ -119,21 +122,21 @@ const Footer = () => {
                             </div>
                         ))}
                     </div>
-                    <div>
+                    <div className='md:basis-1/4 space-y-3'>
                         {contactInfo.map((info, index) => (
                             <div key={index}>
-                                <h2 className='text-blue-500'>{info.name}</h2>
-                                <div>
+                                <h2 className='text-blue-500 pb-2 font-bold'>{info.name}</h2>
+                                <div className='space-y-3'>
                                     {info.links.map((link, index) => {
                                         const Icon = link.icon
                                         return (
-                                            <div key={index} className='text-slate-500'>
-                                                <div>
-                                                    <Icon/>
+                                            <div key={index} className='text-slate-300 border p-1 flex gap-x-2'>
+                                                <div className='pt-1 text-blue-500'>
+                                                    <Icon size={13}/>
                                                 </div>
-                                                <div>
-                                                    <h2>{link.heading}</h2>
-                                                    <p>{link.title}</p>
+                                                <div className='space-y-1'>
+                                                    <h2 className='text-white font-semibold text-sm'>{link.heading}</h2>
+                                                    <p className='text-xs'>{link.title}</p>
                                                 </div>
 
                                             </div>
@@ -149,6 +152,9 @@ const Footer = () => {
                 </div>
             </div>
 
+        </div>
+        <div className='text-xs font-semibold text-center py-2 '>
+            <p>Copyright &copy; {new Date().getFullYear()}. All Rights Reserved</p>
         </div>
       
     </section>

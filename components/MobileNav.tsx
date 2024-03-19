@@ -31,7 +31,7 @@ const MobileNav = () => {
 
   return (
     <>
-    <div className='px-10 py-5 fixed w-full '>
+    <div className='px-10 py-5 fixed top-0 bg-white z-20 w-full '>
         <div className='flex items-center justify-between'>
             <div>
                 <Image src={`https://eriscofoodsltd.com.ng/images/logo.png`} width={100} height={100} alt='logo'/>

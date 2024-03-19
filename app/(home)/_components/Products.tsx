@@ -10,13 +10,13 @@ const Products = () => {
         </div>
         <div className='flex items-center gap-x-3 justify-center w-full'>
             <div>
-                <Image src={`/erisco.jpg`} width={200} height={100} alt='erisco' className='w-full h-40 hover:h-80 transition-all duration-300'/>
+                <Image src={`/erisco.jpg`} width={200} height={100} alt='erisco' className='w-full md:h-40 h-20 hover:h-40 md:hover:h-80 transition-all duration-300'/>
             </div>
             <div>
-                <Image src={`/nagiko.jpg`} width={200} height={100} alt='nagiko' className='w-full '/>
+                <Image src={`/nagiko.jpg`} width={200} height={100} alt='nagiko' className='w-full h-40 md:h-full  '/>
             </div>
             <div>
-                <Image src={`/ricgiko.jpg`} width={200} height={100} alt='ricgiko' className='w-full h-40 hover:h-80 transition-all duration-300'/>
+                <Image src={`/ricgiko.jpg`} width={200} height={100} alt='ricgiko' className='w-full md:h-40 h-20 hover:h-40 md:hover:h-80 transition-all duration-300'/>
             </div>
 
         </div>

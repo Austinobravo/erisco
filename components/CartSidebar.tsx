@@ -8,7 +8,7 @@ interface Props{
 }
 const CartSidebar = ({toggleCart}: Props) => {
   return (
-    <div className='!h-screen fixed right-0 bg-white border z-50 w-96 px-4 py-3'>
+    <div className='!h-screen fixed top-0 right-0 bg-white border z-50 w-96 px-4 py-3'>
         <div className='flex items-center justify-between'>
             <h2 className='text-lg font-bold'>Shopping cart</h2>
             <X onClick={toggleCart} className='bg-red-500 text-white rounded-md cursor-pointer' strokeWidth={2} />

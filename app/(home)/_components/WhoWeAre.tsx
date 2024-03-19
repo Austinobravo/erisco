@@ -8,7 +8,7 @@ const WhoWeAre = () => {
         <div className='text-center text-3xl text-blue-500 font-semibold pb-10'>
             <h2>Who We Are</h2>
         </div>
-        <div className='flex gap-x-5'>
+        <div className='flex md:flex-nowrap flex-wrap gap-x-5'>
             <div className='md:basis-1/2 w-full'>
                 <Image src={`/who.jpg`} width={100} height={100} alt='whoWeAre' className='w-full rounded-full'/>
             </div>
