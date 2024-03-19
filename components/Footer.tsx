@@ -1,6 +1,6 @@
 import React from 'react'
 import Button from './Button'
-import { Facebook, Instagram, Locate, LocateFixed, Mail, Phone, Pin, Twitter, Youtube } from 'lucide-react'
+import { Facebook, Instagram, Locate, LocateFixed, Mail, MapPinned, Phone, Pin, Twitter, Youtube } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -51,20 +51,20 @@ const contactInfo = [
         name: 'Contact Info',
         links: [
             {
-                href: '',
+                href: 'tel:+2348134440000',
                 icon: Phone,
                 heading: '+234 8134440000',
                 title: 'Mon - Fri 10am - 8pm'
             },
             {
-                href: '',
+                href: 'mailto:eriscofoodsltd2009@gmail.com',
                 icon: Mail,
                 heading: 'eriscofoodsltd2009@gmail.com',
                 title: 'Information & support'
             },
             {
                 href: '',
-                icon: LocateFixed,
+                icon: MapPinned,
                 heading: 'Plot 2, Oyeleke Street, Oregun-Alausa, Ikeja, Lagos.',
                 title: 'Main office location'
             },
@@ -135,7 +135,7 @@ const Footer = () => {
                                                     <Icon size={13}/>
                                                 </div>
                                                 <div className='space-y-1'>
-                                                    <h2 className='text-white font-semibold text-sm'>{link.heading}</h2>
+                                                    <h2 className='text-white font-semibold text-sm'><Link href={link.href} target='_blank'>{link.heading}</Link></h2>
                                                     <p className='text-xs'>{link.title}</p>
                                                 </div>
 
