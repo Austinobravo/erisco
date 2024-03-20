@@ -62,7 +62,7 @@ const Products = () => {
         <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-5'>
             {allProducts.map((product, index) =>(
                 <div key={index} className='flex gap-5 shadow-2xl rounded-md p-5 '>
-                    <Link href={``}>
+                    <Link href={`/products/${product.id}`}>
                         <Image src={product.image} width={100} height={100} alt={product.title} className=''/>
                     </Link>
                     <div className='space-y-2'>
