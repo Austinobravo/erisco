@@ -80,7 +80,7 @@ const Footer = () => {
             </div>
             <div className='flex justify-center gap-x-2'>
                 <Button title='Call Us Now'icon={Phone} href=''/>
-                <Button title='Reach Us On Mail'icon={Mail} bgColor='bg-blue-500' border='border' href='' />
+                <Button title='Reach Us On Mail'icon={Mail} bgColor='bg-transparent' border='border' href='' />
             </div>
         </div>
         <div className='bg-black/90 p-10'>

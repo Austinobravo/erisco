@@ -12,14 +12,14 @@ const page = () => {
         <div>
             <ChangeNavigation/>
         </div>
-        <form className='space-y-6 text-sm w-full'>
+        <form className='mx-auto space-y-6 text-sm md:w-fit w-full'>
             <div>
                 <label htmlFor='email'></label>
-                <input type='text' id='email' name='email' placeholder='Email address *' className='border-2 outline-none focus:border-amber-500 p-2 md:w-[500px] w-full'/>
+                <input type='text' id='email' name='email' placeholder='Email address *' className='border-2 outline-none focus:border-amber-500 p-2 md:w-[500px] w-full' required/>
             </div>
             <div className='relative'>
                 <label htmlFor='password'></label>
-                <input type={isPasswordToggled ? 'text' : 'password'} id='password' name='password' placeholder='Password *' className='border-2 outline-none focus:border-amber-500 p-2 md:w-[500px] w-full'/>
+                <input type={isPasswordToggled ? 'text' : 'password'} id='password' name='password' placeholder='Password *' className='border-2 outline-none focus:border-amber-500 p-2 md:w-[500px] w-full' required/>
                 <span className='absolute right-5 top-3 cursor-pointer' onClick={()=> setIsPasswordToggled(!isPasswordToggled)}>
                     {isPasswordToggled ?
                     <EyeOff size={18}/>
