@@ -20,7 +20,7 @@ const CartSidebar = ({toggleCart}: Props) => {
                 </div>
                 <div className='flex items-center justify-between '>
                     <div className='basis-1/2 pl-3 text-sm space-y-2'>
-                        <h2 className='font-semibold'>Tin Tomatoes</h2>
+                        <h2 className='font-semibold'>Nagiko Tin Tomato</h2>
                         <span className='text-xs opacity-80'>1 x N200.00</span>
                         <div className=' space-x-2'>
                             <button className='border rounded-full px-1'>-</button>
@@ -29,7 +29,7 @@ const CartSidebar = ({toggleCart}: Props) => {
                         </div>
                     </div>
                     <div className='basis-1/2 '>
-                        <Image src={`https://eriscofoodsltd.com.ng/images/erisco-seasoning.jpg`} width={100} height={100} alt='erisco' className='w-fit ml-auto rounded-md'/>
+                        <Image src={`/nagiko.jpg`} width={100} height={100} alt='erisco' className='w-fit ml-auto rounded-md'/>
                     </div>
 
                 </div>
