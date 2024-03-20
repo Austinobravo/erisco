@@ -74,9 +74,9 @@ const contactInfo = [
 const Footer = () => {
   return (
     <section>
-        <div className='bg-blue-500 p-10 space-y-8'>
-            <div className='text-center flex justify-center text-white text-3xl'>
-                <h3 className='md:w-[800px] md:text-base text-lg font-bold'>Join thousands of companies,business owners & constumers who trust Erisco</h3>
+        <div className='bg-blue-900 bg-cover bg-center p-10 space-y-8' style={{backgroundImage: `url(https://the7.io/elementor-main/wp-content/uploads/sites/77/2022/02/layered-waves-row-0.svg)`}}>
+            <div className='text-center flex justify-center text-white'>
+                <h3 className='md:w-[800px]  md:text-3xl text-lg font-bold'>Join thousands of companies,business owners & constumers who trust Erisco</h3>
             </div>
             <div className='flex justify-center gap-x-2'>
                 <Button title='Call Us Now'icon={Phone} href=''/>
