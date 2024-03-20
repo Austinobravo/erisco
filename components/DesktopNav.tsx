@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import CartSidebar from './CartSidebar'
+import { usePathname } from 'next/navigation'
 
 const navLinks = [
   {
@@ -26,13 +27,14 @@ const navLinks = [
 
 const DesktopNav = () => {
   const [isCartToggled, setIsCartToggled] = React.useState<boolean>(false)
+  const pathname = usePathname()
   return (
     <>
       <div className='flex justify-between fixed bg-white z-20 px-10 w-full py-5 items-center'>
         <div className='flex items-center gap-5'>
-          <div>
+          <Link href={`/`}>
               <Image src={`https://eriscofoodsltd.com.ng/images/logo.png`} width={100} height={100} alt='logo'/>
-          </div>
+          </Link>
           <div>
             <form className='flex items-center shadow p-2 rounded-md space-x-2 text-xs'>
               <div>
@@ -57,7 +59,7 @@ const DesktopNav = () => {
           <div className='text-xs'>
             <ul className='flex space-x-4 items-center'>
                 {navLinks.map((navLink, index) => (
-                  <li key={index} className={`${navLink.name === 'Pre Order' && 'bg-green-500 px-2 rounded-md py-1 text-white '}`}>
+                  <li key={index} className={`${navLink.name === 'Pre Order' && 'bg-green-500 px-2 rounded-md py-1 text-white '} ${pathname === navLink.href && 'font-bold text-blue-500'}`} >
                     <Link href={navLink.href}>
                         {navLink.name}
                     </Link>
@@ -66,7 +68,9 @@ const DesktopNav = () => {
             </ul>
           </div>
           <div className='flex items-center gap-2 text-xs'>
-            <User size={15}/>
+            <Link href={`/register`}>
+              <User size={15}/>
+            </Link>
             <div className='relative cursor-pointer' onClick={()=>setIsCartToggled(!isCartToggled)}>
               <ShoppingCart size={20}/>
               <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>1</span>

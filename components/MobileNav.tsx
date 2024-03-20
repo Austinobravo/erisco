@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import CartSidebar from './CartSidebar'
+import { usePathname } from 'next/navigation'
 
 
 const navLinks = [
@@ -28,17 +29,20 @@ const navLinks = [
 const MobileNav = () => {
     const [isMenuToggled, setIsMenuToggled] = React.useState<boolean>(false)
     const [isCartToggled, setIsCartToggled] = React.useState<boolean>(false)
+    const pathname = usePathname()
 
   return (
     <>
     <div className='px-10 py-5 fixed top-0 bg-white z-20 w-full '>
         <div className='flex items-center justify-between'>
-            <div>
+            <Link href={`/`}>
                 <Image src={`https://eriscofoodsltd.com.ng/images/logo.png`} width={100} height={100} alt='logo'/>
-            </div>
+            </Link>
             <div className='flex gap-x-5'>
                 <div className='flex items-center gap-2 text-xs'>
-                    <User size={15}/>
+                    <Link href={`/register`}>
+                      <User size={15}/>
+                    </Link>
                     <div className='relative cursor-pointer' onClick={()=>setIsCartToggled(!isCartToggled)}>
                         <ShoppingCart size={20}/>
                         <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>1</span>
@@ -57,7 +61,7 @@ const MobileNav = () => {
             <div className='text-xs'>
                 <ul className='flex flex-col shadow mr-5 p-2 space-y-2 font-semibold'>
                     {navLinks.map((navLink, index) => (
-                        <li key={index} className={`${navLink.name === 'Pre Order' && 'bg-green-500 px-2 rounded-md py-1 text-white w-fit  '}`}>
+                        <li key={index} className={`${navLink.name === 'Pre Order' && 'bg-green-500 px-2 rounded-md py-1 text-white w-fit  '} ${pathname === navLink.href && 'font-bold text-blue-500'}`} onClick={()=>setIsMenuToggled(!isMenuToggled)}>
                             <Link href={navLink.href}>
                                 {navLink.name}
                             </Link>
