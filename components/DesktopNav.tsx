@@ -47,7 +47,7 @@ const DesktopNav = () => {
               <div>
                 <label htmlFor='category'></label>
                 <select className='outline-none cursor-pointer'>
-                  <option>All Category</option>
+                  <option>All Categories</option>
                   <option>Tomatoes</option>
                   <option>Cubes</option>
                 </select>
