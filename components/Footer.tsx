@@ -79,8 +79,8 @@ const Footer = () => {
                 <h3 className='md:w-[800px]  md:text-3xl text-lg font-bold'>Join thousands of companies,business owners & constumers who trust Erisco</h3>
             </div>
             <div className='flex justify-center gap-x-2'>
-                <Button title='Call Us Now'icon={Phone} href=''/>
-                <Button title='Reach Us On Mail'icon={Mail} bgColor='bg-transparent' border='border' href='' />
+                <Button title='Call Us Now'icon={Phone} href='tel:+2348134440000'/>
+                <Button title='Reach Us On Mail'icon={Mail} bgColor='bg-transparent' border='border' href='mailto:eriscofoodsltd2009@gmail.com' />
             </div>
         </div>
         <div className='bg-black/90 p-10'>

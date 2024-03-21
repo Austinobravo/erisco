@@ -1,21 +1,40 @@
+'use client'
 import Button from '@/components/Button'
 import { ShoppingBag } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 import RelatedProducts from './_components/RelatedProducts'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { allProducts } from '@/lib/globals'
 
 const page = () => {
+    const pathname = usePathname()
+    const productId = +pathname.split('/').pop()!
+    const getProductDataById = (id:number) =>{
+        const gottenProduct = allProducts.filter(eachProductId => eachProductId.id === id)
+        return gottenProduct
+    }
+
+    const [productDetail, setProductDetail] = React.useState<any[]>([])
+    React.useEffect(() => {
+        const fetchData = () => {
+             const productDetail = getProductDataById(productId)
+             setProductDetail(productDetail)
+        }
+        fetchData()
+    },[])
   return (
     <section className='py-7'>
-        <div className='flex px-10 gap-7'>
+        {productDetail.length > 0 ? 
+        <div className='flex px-10 gap-10 md:flex-nowrap flex-wrap'>
             <div className='w-full'>
-                <Image src={`/erisco.jpg`} width={500} height={100} alt='product' className='w-full'/>
+                <Image src={productDetail[0].image} width={500} height={100} alt='product' className='w-full'/>
             </div>
             <div className='space-y-5 pr-10'>
-                <h2 className='text-3xl font-bold'>Erisco Sugar Cubes</h2>
+                <h2 className='text-3xl font-bold'>{productDetail[0].title}</h2>
                 <div className='text-sm'>
-                    <span className='mr-1 line-through opacity-60'>N250.00</span>
-                    <span className='text-blue-500'>N200.00</span>
+                    <span className='mr-1 line-through opacity-60'>{productDetail[0].previousPrice ? 'N' + productDetail[0].previousPrice.toFixed(2) : ''}</span>
+                    <span className='text-blue-500'>N{productDetail[0].currentPrice.toFixed(2)}</span>
                 </div>
                 <div className='flex items-center gap-x-3'>
                     <div className=' space-x-2'>
@@ -26,11 +45,14 @@ const page = () => {
                     <Button href='' title='Add To Cart' icon={ShoppingBag}/>
                 </div>
                 <div>
-                    <p className='leading-relaxed'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam voluptates ut cum libero incidunt aspernatur, molestias, et placeat cupiditate culpa unde adipisci accusamus ullam velit esse? Exercitationem odit doloribus iste.</p>
+                    <p className='leading-relaxed'>{productDetail[0].details}.</p>
                 </div>
             </div>
         
         </div>
+        :
+        <p>Loading...</p>
+        }
         <div>
             <RelatedProducts/>
         </div>
