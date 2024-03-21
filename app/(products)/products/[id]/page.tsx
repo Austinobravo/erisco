@@ -27,10 +27,10 @@ const page = () => {
     <section className='py-7'>
         {productDetail.length > 0 ? 
         <div className='flex px-10 gap-10 md:flex-nowrap flex-wrap'>
-            <div className='w-full'>
+            <div className='md:basis-1/2 w-full'>
                 <Image src={productDetail[0].image} width={500} height={100} alt='product' className='w-full'/>
             </div>
-            <div className='space-y-5 pr-10'>
+            <div className='md:basis-1/2 space-y-5 pr-10'>
                 <h2 className='text-3xl font-bold'>{productDetail[0].title}</h2>
                 <div className='text-sm'>
                     <span className='mr-1 line-through opacity-60'>{productDetail[0].previousPrice ? 'N' + productDetail[0].previousPrice.toFixed(2) : ''}</span>
