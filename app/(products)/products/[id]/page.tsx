@@ -7,9 +7,8 @@ import RelatedProducts from './_components/RelatedProducts'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { allProducts } from '@/lib/globals'
 
-const page = () => {
-    const pathname = usePathname()
-    const productId = +pathname.split('/').pop()!
+const page = ({params}: {params:{id:string}}) => {
+    const productId = parseInt(params.id)
     const getProductDataById = (id:number) =>{
         const gottenProduct = allProducts.filter(eachProductId => eachProductId.id === id)
         return gottenProduct

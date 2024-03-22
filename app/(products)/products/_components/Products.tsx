@@ -1,9 +1,11 @@
+'use client'
 import Button from '@/components/Button'
 import { ShoppingBag } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { allProducts } from '@/lib/globals'
+import {  addProductToCart, allProducts, selectedCartProduct } from '@/lib/globals'
+import { useCart } from '@/lib/cart'
 
 // const allProducts = [
 //     {
@@ -56,6 +58,9 @@ import { allProducts } from '@/lib/globals'
 //     },
 // ]
 const Products = () => {
+    // const {addProductToCart, selectedProductsInCart} = useCart()
+    // console.log("selectedProductinProductComponent", selectedProductsInCart)
+    
   return (
     <section className='p-10'>
         <h1 className='py-2'>All Available Products</h1>
@@ -66,13 +71,15 @@ const Products = () => {
                         <Image src={product.image} width={100} height={100} alt={product.title} className=''/>
                     </Link>
                     <div className='space-y-2'>
-                        <h3 className='font-bold'>{product.title}</h3>
+                        <Link href={`/products/${product.id}`} >
+                            <h3 className='font-bold'>{product.title}</h3>
+                        </Link>
                         <div className='text-sm'>
                             <span className='mr-1 line-through opacity-60'>{product.previousPrice ? "N" + product.previousPrice + ".00" : ''}</span>
                             <span className='text-blue-500'>N{product.currentPrice}.00</span>
                         </div>
                         <p className='text-xs '>{product.details}</p>
-                        <Button href='' title='Add To Cart' icon={ShoppingBag}/>
+                        <Button href='' title='Add To Cart' icon={ShoppingBag} onClick={()=>addProductToCart(product.id)}/>
                     </div>
 
                 </div>

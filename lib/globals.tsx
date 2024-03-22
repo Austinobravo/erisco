@@ -1,3 +1,4 @@
+import { Cart } from "@prisma/client"
 
      export const allProducts = [
         {
@@ -51,3 +52,49 @@
     ]
     
 
+export const selectedCartProduct = [{
+    
+} as Cart]
+
+export const addProductToCart = (id:number) => {
+    const isProductInCart = findProductInCart(id)
+    if (isProductInCart){
+        isProductInCart.quantity += 1
+        console.log("increment",id, isProductInCart.quantity)
+    }else{
+        selectedCartProduct.push({
+            id: id,
+            quantity: 1,
+        })
+        console.log("id",id)
+    }
+    updateProductQuantityInCart(id)
+}
+export const subtractProductToCart = (id:number) => {
+    const isProductInCart = findProductInCart(id)
+    if (isProductInCart?.quantity === 0){
+        return;
+    }else{
+        isProductInCart!.quantity -= 1
+        
+    }
+
+    updateProductQuantityInCart(id)
+
+}
+export const updateProductQuantityInCart = (id:number) => {
+    calculateTotalItemsInCart()
+    const isProductInCart = findProductInCart(id)
+    return isProductInCart?.quantity
+
+}
+
+export const calculateTotalItemsInCart = () => {
+    const totalValue = selectedCartProduct.map((product) => product.quantity).reduce((total, nextNumber) => nextNumber + total, 0)
+    console.log("value", totalValue)
+    return totalValue
+}
+
+export const findProductInCart = (id:number) =>{
+    return selectedCartProduct.find((eachProduct) => eachProduct.id === id)
+}

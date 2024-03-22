@@ -3,6 +3,7 @@ import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { CartProvider } from "@/lib/cart";
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({subsets: ["devanagari"], weight:['100','200','300','400','500','600','700','800','900']})
@@ -19,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={poppins.className}><Navbar/><div className="mt-24">{children}</div><Footer/></body>
+      <body className={poppins.className}><Navbar/><div className="mt-24"><CartProvider>{children}</CartProvider></div><Footer/></body>
     </html>
   );
 }
