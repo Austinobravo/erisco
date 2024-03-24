@@ -15,8 +15,24 @@ datasource db {
   // url      = env("DATABASE_URL")
 }
 
+model User{
+  id Int @id @default(autoincrement())
+  username String 
+  email String @unique
+  phone Int 
+  password String
+
+  cart Cart[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Cart {
   id Int @id @default(autoincrement())
-  quantity Int
+  quantity Int 
+  productId Int @unique
+
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
 }

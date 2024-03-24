@@ -65,6 +65,7 @@ export const addProductToCart = (id:number) => {
         selectedCartProduct.push({
             id: id,
             quantity: 1,
+            userId: 0
         })
         console.log("id",id)
     }

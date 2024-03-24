@@ -1,49 +1,26 @@
 
-import { useCart } from '@/lib/cart'
-import { getCurrentUser } from '@/lib/currentuser'
-import {  addProductToCart, allProducts, subtractProductToCart, updateProductQuantityInCart ,selectedCartProduct} from '@/lib/globals'
+import { addProductToCart, allProducts, subtractProductToCart, updateProductQuantityInCart } from '@/lib/globals'
 import { ShoppingBag, X } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import prisma from '@/lib/prisma'
-import { useSession } from 'next-auth/react'
-interface Props{
-    toggleCart: () => void
-}
 
-const CartSidebar = ({toggleCart}: Props) => {
-    // const {selectedProductsInCart, addProductToCart} = useCart()
-    // React.useEffect(() => {
-    //     const fetchData = async () => {
-    //         const user =   await getCurrentUser()
-           
-    //         // console.log("user", user)
-
-    //     }
-    //     fetchData()
-    //     // console.log("selectedProductinCArtComponent", selectedProductsInCart)
-    // }, [])
-    // const {data:session} = useSession()
-    // const userId = session?.user.id
+const CartProducts =  () => {
+    const {data:session} = useSession()
+    const userId = session?.user.id
     // const cartProducts = await prisma.cart.findMany({
     //     where:{
     //         userId
     //     }
     // })
     // console.log("allPr", cartProducts)
-    // const productsInCart = allProducts.filter((product) => selectedCartProduct.find((cartProduct) => product.id === cartProduct.id))
+    // const productsInCart = allProducts.filter((product) => cartProducts.find((cartProduct) => product.id === cartProduct.id))
     const productsInCart:any = []
-    // console.log("allPr", productsInCart)
-  
+    console.log("allPr", productsInCart)
   return (
-    <div className='!h-screen fixed top-0 right-0 bg-white border z-50 w-96 px-4 py-3'>
-        <div className='flex items-center justify-between'>
-            <h2 className='text-lg font-bold'>Shopping cart</h2>
-            <X onClick={toggleCart} className='bg-red-500 text-white rounded-md cursor-pointer' strokeWidth={2} />
-        </div>
-        <div className='overflow-y-auto h-full pb-28'>
-            
+    <div className='overflow-y-auto h-full pb-28'>
             {productsInCart.length > 0 ?
                 productsInCart.map((product:any, index:any) => (
                     <div key={index} className='w-full border rounded-md p-2 my-5 space-y-3'>
@@ -72,25 +49,11 @@ const CartSidebar = ({toggleCart}: Props) => {
                 <div className='flex flex-col justify-center items-center pt-10 space-y-4'>
                     <ShoppingBag color='#bbb' size={50}/>
                     <p className='text-sm'>Your Shopping Cart is empty</p>
-                    <span className='text-xs'>Try Shopping <Link href={`/products`} onClick={toggleCart} className='text-blue-500 font-bold'>now</Link></span>
+                    <span className='text-xs'>Try Shopping <Link href={`/products`}  className='text-blue-500 font-bold'>now</Link></span>
                 </div> 
             }
         </div>
-        <div className='absolute z-20 bottom-0 bg-white w-full pr-5 space-y-2'>
-            <div className='flex justify-between  items-center'>
-                <h3>Subtotal:</h3>
-                <p>N200.00</p>
-            </div>
-            <div className='border-cyan-500 border text-sm  rounded-md py-2 text-center'>
-                <Link href={``}>View Cart</Link>
-            </div>
-            <div className='bg-green-500 text-white text-sm py-2 text-center rounded-md'>
-                <Link href={``}>Checkout</Link>
-            </div>
-        </div>
-      
-    </div>
   )
 }
 
-export default CartSidebar
+export default CartProducts

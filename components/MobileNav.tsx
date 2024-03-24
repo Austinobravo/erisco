@@ -1,10 +1,11 @@
 'use client'
-import { AlignRight, ShoppingCart, SquareX, User } from 'lucide-react'
+import { AlignRight, LogOut, ShoppingCart, SquareX, User } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import CartSidebar from './CartSidebar'
 import { usePathname } from 'next/navigation'
+import { signOut, useSession } from 'next-auth/react'
 
 
 const navLinks = [
@@ -30,6 +31,7 @@ const MobileNav = () => {
     const [isMenuToggled, setIsMenuToggled] = React.useState<boolean>(false)
     const [isCartToggled, setIsCartToggled] = React.useState<boolean>(false)
     const pathname = usePathname()
+    const {data:session} = useSession()
 
   return (
     <>
@@ -40,9 +42,16 @@ const MobileNav = () => {
             </Link>
             <div className='flex gap-x-5'>
                 <div className='flex items-center gap-2 text-xs'>
+                    {session?.user ?
+                      <div className='text-xs flex flex-col items-center cursor-pointer' onClick={()=>signOut({redirect:false, callbackUrl:'/'})}>
+                        <LogOut color='red' size={10}/>
+                        <span className='font-semibold'>{session.user.username}</span>      
+                      </div>
+                    :
                     <Link href={`/register`}>
                       <User size={15}/>
                     </Link>
+                    }
                     <div className='relative cursor-pointer' onClick={()=>setIsCartToggled(!isCartToggled)}>
                         <ShoppingCart size={20}/>
                         <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>1</span>

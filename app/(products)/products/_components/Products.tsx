@@ -1,12 +1,11 @@
-'use client'
-import Button from '@/components/Button'
-import { ShoppingBag } from 'lucide-react'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import {  addProductToCart, allProducts, selectedCartProduct } from '@/lib/globals'
 import { useCart } from '@/lib/cart'
-
+import AddToCart from './AddToCart'
+import prisma from '@/lib/prisma'
 // const allProducts = [
 //     {
 //         id: 1,
@@ -57,10 +56,8 @@ import { useCart } from '@/lib/cart'
 //         details: 'The sachet tomato that supersedes other tomato paste.'
 //     },
 // ]
-const Products = () => {
-    // const {addProductToCart, selectedProductsInCart} = useCart()
-    // console.log("selectedProductinProductComponent", selectedProductsInCart)
-    
+const Products = async () => {
+
   return (
     <section className='p-10'>
         <h1 className='py-2'>All Available Products</h1>
@@ -79,7 +76,7 @@ const Products = () => {
                             <span className='text-blue-500'>N{product.currentPrice}.00</span>
                         </div>
                         <p className='text-xs '>{product.details}</p>
-                        <Button href='' title='Add To Cart' icon={ShoppingBag} onClick={()=>addProductToCart(product.id)}/>
+                        <AddToCart productId={product.id} quantity={1}/>
                     </div>
 
                 </div>
