@@ -2,10 +2,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import {  addProductToCart, allProducts, selectedCartProduct } from '@/lib/globals'
-import { useCart } from '@/lib/cart'
+import {   allProducts, selectedCartProduct } from '@/lib/globals'
 import AddToCart from './AddToCart'
-import prisma from '@/lib/prisma'
 // const allProducts = [
 //     {
 //         id: 1,

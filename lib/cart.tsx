@@ -1,17 +1,23 @@
 'use client'
+import { useSession } from "next-auth/react"
 import React, { createContext, useContext } from "react"
+import { getAllProductsInUserCart, ifUSerhasProductInCart } from "./getDetails"
 
 interface Props{
     selectedProductsInCart: any[]
     addProductToCart: (id:number) => void
+    setSelectedProductsInCart: React.Dispatch<React.SetStateAction<any>>;
 }
 const CartContext = createContext<Props>({
     selectedProductsInCart: [],
-    addProductToCart: (id: number) => {}
+    addProductToCart: (id: number) => {},
+    setSelectedProductsInCart: () => {}
 })
 
 export const CartProvider = ({children}: {children: React.ReactNode}) => {
     const [selectedProductsInCart, setSelectedProductsInCart] = React.useState<any[]>([])
+    const {data:session} = useSession()
+    const userId = session?.user.id
 
     const addProductToCart = (id:number) => {
         const existingProduct = selectedProductsInCart.find((product) => product.id === id)
@@ -26,8 +32,19 @@ export const CartProvider = ({children}: {children: React.ReactNode}) => {
         console.log("selectedProduct",selectedProductsInCart)
     };
 
+    React.useEffect(()=>{
+        const fetchData = async () => {
+            const uniqueUserProducts = await getAllProductsInUserCart(userId)
+            setSelectedProductsInCart(uniqueUserProducts)
+            
+
+        }
+        fetchData()
+    },[])
+
+
     return (
-        <CartContext.Provider value={{selectedProductsInCart, addProductToCart}}>
+        <CartContext.Provider value={{selectedProductsInCart, addProductToCart, setSelectedProductsInCart}}>
             {children}
         </CartContext.Provider>
     )

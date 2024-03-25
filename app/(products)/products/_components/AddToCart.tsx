@@ -15,7 +15,6 @@ const AddToCart = ({productId, quantity}: Props) => {
     const [isAdded, setIsAdded] = React.useState<boolean>(false)
     const {data:session} = useSession()
     const userId = session?.user.id
-    const router = useRouter()
     const submitItemInCart = async () => {
         try{
             const response = await axios.post('/api/cart', {productId, userId, quantity})
@@ -44,7 +43,7 @@ const AddToCart = ({productId, quantity}: Props) => {
     },[])
   return (
     <div className='flex gap-x-1'>
-        <button disabled={isAdded} className='disabled:opacity-50'>
+        <button disabled={isAdded} className='disabled:opacity-50 disabled:!cursor-not-allowed'>
             <Button href='' title={isAdded ? 'Added' : 'Add to cart'} icon={ShoppingBag} onClick={submitItemInCart} />
         </button>
         {isAdded && 

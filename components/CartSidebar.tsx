@@ -1,85 +1,114 @@
-
-import { useCart } from '@/lib/cart'
-import { getCurrentUser } from '@/lib/currentuser'
-import {  addProductToCart, allProducts, subtractProductToCart, updateProductQuantityInCart ,selectedCartProduct} from '@/lib/globals'
-import { ShoppingBag, X } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
+import {allProducts} from '@/lib/globals'
 import React from 'react'
-import prisma from '@/lib/prisma'
 import { useSession } from 'next-auth/react'
+import CartProducts from './cartProducts'
+import CartButton from './cartButton'
+import { getAllProductsInUserCart } from '@/lib/getDetails'
+import Link from 'next/link'
 interface Props{
     toggleCart: () => void
 }
 
 const CartSidebar = ({toggleCart}: Props) => {
-    // const {selectedProductsInCart, addProductToCart} = useCart()
-    // React.useEffect(() => {
-    //     const fetchData = async () => {
-    //         const user =   await getCurrentUser()
-           
-    //         // console.log("user", user)
+   
+    const {data:session} = useSession()
+    const userId = session?.user.id
+    const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
+    const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
 
-    //     }
-    //     fetchData()
-    //     // console.log("selectedProductinCArtComponent", selectedProductsInCart)
-    // }, [])
-    // const {data:session} = useSession()
-    // const userId = session?.user.id
-    // const cartProducts = await prisma.cart.findMany({
-    //     where:{
-    //         userId
-    //     }
-    // })
-    // console.log("allPr", cartProducts)
-    // const productsInCart = allProducts.filter((product) => selectedCartProduct.find((cartProduct) => product.id === cartProduct.id))
-    const productsInCart:any = []
-    // console.log("allPr", productsInCart)
-  
+    const [selectedProductsInCart, setSelectedProductsInCart] = React.useState<any[]>(parsedSelectedProducts);
+
+    const productsInCart = allProducts.filter((product) => selectedProductsInCart.find((cartProduct) => product.id === cartProduct.id))
+
+     const updateProductQuantityInCart = (id:number) => {
+        calculateTotalValueInUniqueProduct()
+        const isProductInCart = findProductInCart(id)
+        return isProductInCart?.quantity
+        
+    }
+
+    const addProductToCart = (id:number) => {
+        const existingProduct = findProductInCart(id)
+        
+        if(existingProduct === undefined){
+            setSelectedProductsInCart([...selectedProductsInCart, {id, quantity: 1} ])
+            
+        }else{
+            setSelectedProductsInCart(prevSelectedProducts =>
+                prevSelectedProducts.map(product =>
+                    product.id === id ? {...product, quantity: product.quantity + 1} : product
+                )
+            );
+        }
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
+        updateProductQuantityInCart(existingProduct.id)
+        
+    };
+    
+    const subtractProductToCart = (id:number) => {
+        const existingProduct= findProductInCart(id)
+        if (existingProduct.quantity === 0){
+            return;
+        }else{
+            setSelectedProductsInCart(prevSelectedProducts =>
+                prevSelectedProducts.map(product =>
+                    product.id === id ? {...product, quantity: product.quantity - 1} : product
+                )
+            );
+        }
+        
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
+        updateProductQuantityInCart(existingProduct.id)
+        
+    
+    }
+    
+     const calculateTotalValueInUniqueProduct = () => {
+         const totalValue = productsInCart.map((product) => product.currentPrice).reduce((total, nextNumber) => nextNumber + total, 0)
+        return totalValue.toFixed(2)
+    }
+
+     const calculateTotalItemsInCart = () => {
+        const totalAmount = selectedProductsInCart.map((product) => {
+            const {quantity, id} = product
+            const uniqueProduct = productsInCart.find((product) => product.id === id)
+            return (
+                quantity * uniqueProduct?.currentPrice!
+            )
+        }).reduce((total, nextNumber) => nextNumber + total, 0)
+
+        return totalAmount.toFixed(2) 
+    }
+    
+     const findProductInCart = (id:number) =>{
+        return selectedProductsInCart.find((eachProduct) => eachProduct.id === id)
+    }
+    React.useEffect(()=>{
+        const fetchData = async () => {
+            const uniqueUserProducts = await getAllProductsInUserCart(userId)
+            if(parsedSelectedProducts.length > 0){
+                setSelectedProductsInCart(parsedSelectedProducts)   
+            }else{
+                setSelectedProductsInCart(uniqueUserProducts)
+            }
+        }
+        fetchData()
+    },[])
+
   return (
     <div className='!h-screen fixed top-0 right-0 bg-white border z-50 w-96 px-4 py-3'>
         <div className='flex items-center justify-between'>
             <h2 className='text-lg font-bold'>Shopping cart</h2>
-            <X onClick={toggleCart} className='bg-red-500 text-white rounded-md cursor-pointer' strokeWidth={2} />
+            <CartButton toggle={toggleCart}/>
         </div>
         <div className='overflow-y-auto h-full pb-28'>
-            
-            {productsInCart.length > 0 ?
-                productsInCart.map((product:any, index:any) => (
-                    <div key={index} className='w-full border rounded-md p-2 my-5 space-y-3'>
-                        <div title='Delete' className='ml-auto w-fit cursor-pointer'>
-                            <X/>
-                        </div>
-                        <div className='flex items-center justify-between '>
-                            <div className='basis-1/2 pl-3 text-sm space-y-2'>
-                                <h2 className='font-semibold'>{product.title}</h2>
-                                <span className='text-xs opacity-80'>{updateProductQuantityInCart(product.id)} x N{product.currentPrice.toFixed(2)}</span>
-                                <div className=' space-x-2'>
-                                    <button className='border rounded-full px-1' onClick={()=>subtractProductToCart(product.id)}>-</button>
-                                    <span>{updateProductQuantityInCart(product.id)}</span>
-                                    <button className='border rounded-full px-1' onClick={()=>addProductToCart(product.id)}>+</button>
-                                </div>
-                            </div>
-                            <div className='basis-1/2 '>
-                                <Image src={product.image} width={100} height={100} alt={product.title} className='w-fit ml-auto rounded-md'/>
-                            </div>
-
-                        </div>
-                    </div> 
-
-                ))
-            :
-                <div className='flex flex-col justify-center items-center pt-10 space-y-4'>
-                    <ShoppingBag color='#bbb' size={50}/>
-                    <p className='text-sm'>Your Shopping Cart is empty</p>
-                    <span className='text-xs'>Try Shopping <Link href={`/products`} onClick={toggleCart} className='text-blue-500 font-bold'>now</Link></span>
-                </div> 
-            }
+            <CartProducts toggle={toggleCart} addProductToCart={addProductToCart} subtractProductToCart={subtractProductToCart} updateProductQuantityInCart={updateProductQuantityInCart} productsInCart={productsInCart}/>
+           
         </div>
         <div className='absolute z-20 bottom-0 bg-white w-full pr-5 space-y-2'>
             <div className='flex justify-between  items-center'>
                 <h3>Subtotal:</h3>
-                <p>N200.00</p>
+                <p>N{calculateTotalItemsInCart()}</p>
             </div>
             <div className='border-cyan-500 border text-sm  rounded-md py-2 text-center'>
                 <Link href={``}>View Cart</Link>

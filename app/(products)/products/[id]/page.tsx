@@ -6,6 +6,9 @@ import React from 'react'
 import RelatedProducts from './_components/RelatedProducts'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { allProducts } from '@/lib/globals'
+import AddToCart from '../_components/AddToCart'
+import { getAllProductsInUserCart } from '@/lib/getDetails'
+import { useSession } from 'next-auth/react'
 
 const page = ({params}: {params:{id:string}}) => {
     const productId = parseInt(params.id)
@@ -13,12 +16,84 @@ const page = ({params}: {params:{id:string}}) => {
         const gottenProduct = allProducts.filter(eachProductId => eachProductId.id === id)
         return gottenProduct
     }
+    const parsedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any) ;
+    const checkIfIdIsInLocalStorage = (id:number) => {
+        const gottenProduct = parsedSelectedProducts.find((eachProduct:any) => eachProduct.productId === id)
+        return gottenProduct
+    }
+
+    const [selectedProductsInCart, setSelectedProductsInCart] = React.useState<any[]>(parsedSelectedProducts);
+    const [selectedProductsInLocalStorage, setSelectedProductsInLocalStorage] = React.useState<any[]>([]);
+
+    const productsInCart = allProducts.filter((product) => selectedProductsInCart.find((cartProduct) => product.id === cartProduct.id))
+
+     const updateProductQuantityInCart = (id:number) => {
+        calculateTotalValueInUniqueProduct()
+        const isProductInCart = findProductInCart(id)
+        return isProductInCart?.quantity
+        
+    }
+
+    const addProductToCart = (id:number) => {
+        const existingProduct = findProductInCart(id)
+        
+        if(existingProduct === undefined){
+            setSelectedProductsInCart([...selectedProductsInCart, {id, quantity: 1} ])
+            
+        }else{
+            setSelectedProductsInCart(prevSelectedProducts =>
+                prevSelectedProducts.map(product =>
+                    product.id === id ? {...product, quantity: product.quantity + 1} : product
+                )
+            );
+        }
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
+        updateProductQuantityInCart(existingProduct.id)
+        
+    };
+    
+    const subtractProductToCart = (id:number) => {
+        const existingProduct= findProductInCart(id)
+        if (existingProduct.quantity === 0){
+            return;
+        }else{
+            setSelectedProductsInCart(prevSelectedProducts =>
+                prevSelectedProducts.map(product =>
+                    product.id === id ? {...product, quantity: product.quantity - 1} : product
+                )
+            );
+        }
+        
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
+        updateProductQuantityInCart(existingProduct.id)
+        
+    
+    }
+    
+     const calculateTotalValueInUniqueProduct = () => {
+         const totalValue = productsInCart.map((product) => product.currentPrice).reduce((total, nextNumber) => nextNumber + total, 0)
+        return totalValue.toFixed(2)
+    }
+
+    
+     const findProductInCart = (id:number) =>{
+        return selectedProductsInCart.find((eachProduct) => eachProduct.id === id)
+    }
+
 
     const [productDetail, setProductDetail] = React.useState<any[]>([])
+    const [productDetailInLocalStorage, setProductDetailInLocalStorage] = React.useState<any>({})
     React.useEffect(() => {
         const fetchData = () => {
-             const productDetail = getProductDataById(productId)
-             setProductDetail(productDetail)
+            const confirmIfIdIsInLocalStorage = checkIfIdIsInLocalStorage(productId)
+            // console.log('id', confirmIfIdIsInLocalStorage.productId)
+            if(confirmIfIdIsInLocalStorage === undefined){
+                const productDetail = getProductDataById(productId)
+                setProductDetail(productDetail)     
+            }else{
+                setProductDetailInLocalStorage(confirmIfIdIsInLocalStorage)
+                setProductDetail(productsInCart)    
+            }
         }
         fetchData()
     },[])
@@ -37,11 +112,11 @@ const page = ({params}: {params:{id:string}}) => {
                 </div>
                 <div className='flex items-center gap-x-3'>
                     <div className=' space-x-2'>
-                        <button className='border rounded-full px-1'>-</button>
-                        <span>1</span>
-                        <button className='border rounded-full px-1'>+</button>
+                        <button className='border rounded-full px-1' onClick={()=>subtractProductToCart(productDetail[0].id)}>-</button>
+                        <span>{updateProductQuantityInCart(productDetailInLocalStorage.productId || productDetail[0].id)} {productDetailInLocalStorage.quantity}</span>
+                        <button className='border rounded-full px-1' onClick={()=>addProductToCart(productDetail[0].id)}>+</button>
                     </div>
-                    <Button href='' title='Add To Cart' icon={ShoppingBag}/>
+                    <AddToCart productId={productDetail[0].id} quantity={1}/>
                 </div>
                 <div>
                     <p className='leading-relaxed'>{productDetail[0].details}.</p>

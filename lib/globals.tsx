@@ -56,21 +56,21 @@ export const selectedCartProduct = [{
     
 } as Cart]
 
-export const addProductToCart = (id:number) => {
-    const isProductInCart = findProductInCart(id)
-    if (isProductInCart){
-        isProductInCart.quantity += 1
-        console.log("increment",id, isProductInCart.quantity)
-    }else{
-        selectedCartProduct.push({
-            id: id,
-            quantity: 1,
-            userId: 0
-        })
-        console.log("id",id)
-    }
-    updateProductQuantityInCart(id)
-}
+// export const addProductToCart = (id:number) => {
+//     const isProductInCart = findProductInCart(id)
+//     if (isProductInCart){
+//         isProductInCart.quantity += 1
+//         console.log("increment",id, isProductInCart.quantity)
+//     }else{
+//         selectedCartProduct.push({
+//             id: id,
+//             quantity: 1,
+//             userId: 0
+//         })
+//         console.log("id",id)
+//     }
+//     updateProductQuantityInCart(id)
+// }
 export const subtractProductToCart = (id:number) => {
     const isProductInCart = findProductInCart(id)
     if (isProductInCart?.quantity === 0){
