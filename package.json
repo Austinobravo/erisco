@@ -22,7 +22,8 @@
     "prisma": "^5.11.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "stripe": "^14.22.0"
   },
   "devDependencies": {
     "@types/node": "^20",

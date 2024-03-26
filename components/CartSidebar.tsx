@@ -3,8 +3,11 @@ import React from 'react'
 import { useSession } from 'next-auth/react'
 import CartProducts from './cartProducts'
 import CartButton from './cartButton'
-import { getAllProductsInUserCart } from '@/lib/getDetails'
+import { deleteUniqueItemFromCart, getAllProductsInUserCart } from '@/lib/getDetails'
 import Link from 'next/link'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
+import Checkout from './Checkout'
 interface Props{
     toggleCart: () => void
 }
@@ -15,14 +18,25 @@ const CartSidebar = ({toggleCart}: Props) => {
     const userId = session?.user.id
     const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
     const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
+    const router = useRouter()
+    const checkIfUserInLocalStorage = () => {
+        const getUser = parsedSelectedProducts.find((user: { userId: number | undefined }) => user.userId === userId)
+        if (getUser){
+            return parsedSelectedProducts
+        }else{
+            return []
+        }
+        
+    }
+    const [selectedProductsInCart, setSelectedProductsInCart] = React.useState<any[]>(checkIfUserInLocalStorage());
 
-    const [selectedProductsInCart, setSelectedProductsInCart] = React.useState<any[]>(parsedSelectedProducts);
-
-    const productsInCart = allProducts.filter((product) => selectedProductsInCart.find((cartProduct) => product.id === cartProduct.id))
+    const productsInCart = allProducts.filter((product) => selectedProductsInCart.find((cartProduct) => product.id === cartProduct.productId))
 
      const updateProductQuantityInCart = (id:number) => {
         calculateTotalValueInUniqueProduct()
         const isProductInCart = findProductInCart(id)
+        console.log('prodcut', isProductInCart)
+        console.log('selected', selectedProductsInCart)
         return isProductInCart?.quantity
         
     }
@@ -31,34 +45,35 @@ const CartSidebar = ({toggleCart}: Props) => {
         const existingProduct = findProductInCart(id)
         
         if(existingProduct === undefined){
-            setSelectedProductsInCart([...selectedProductsInCart, {id, quantity: 1} ])
+            setSelectedProductsInCart(prevSelectedProducts => [...prevSelectedProducts, {id, quantity: 1} ])
             
         }else{
             setSelectedProductsInCart(prevSelectedProducts =>
                 prevSelectedProducts.map(product =>
-                    product.id === id ? {...product, quantity: product.quantity + 1} : product
+                    product.productId === id ? {...product, quantity: product.quantity + 1} : product
                 )
             );
         }
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
+        
         updateProductQuantityInCart(existingProduct.id)
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
         
     };
     
     const subtractProductToCart = (id:number) => {
         const existingProduct= findProductInCart(id)
-        if (existingProduct.quantity === 0){
-            return;
+        if (existingProduct.quantity <= 1){
+            deleteItemInCart(id)
         }else{
             setSelectedProductsInCart(prevSelectedProducts =>
                 prevSelectedProducts.map(product =>
-                    product.id === id ? {...product, quantity: product.quantity - 1} : product
+                    product.productId === id ? {...product, quantity: product.quantity - 1} : product
                 )
             );
         }
         
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
         updateProductQuantityInCart(existingProduct.id)
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
         
     
     }
@@ -70,30 +85,41 @@ const CartSidebar = ({toggleCart}: Props) => {
 
      const calculateTotalItemsInCart = () => {
         const totalAmount = selectedProductsInCart.map((product) => {
-            const {quantity, id} = product
-            const uniqueProduct = productsInCart.find((product) => product.id === id)
+            const {quantity, productId} = product
+            const uniqueProduct = productsInCart.find((product) => product.id === productId)
+            console.log('unique', uniqueProduct)
             return (
                 quantity * uniqueProduct?.currentPrice!
-            )
-        }).reduce((total, nextNumber) => nextNumber + total, 0)
+                )
+            }).reduce((total, nextNumber) => total + nextNumber,0)
 
-        return totalAmount.toFixed(2) 
+        return totalAmount.toFixed(2)
     }
     
      const findProductInCart = (id:number) =>{
-        return selectedProductsInCart.find((eachProduct) => eachProduct.id === id)
+        return selectedProductsInCart.find((eachProduct) => eachProduct.productId === id)
     }
-    React.useEffect(()=>{
-        const fetchData = async () => {
-            const uniqueUserProducts = await getAllProductsInUserCart(userId)
-            if(parsedSelectedProducts.length > 0){
-                setSelectedProductsInCart(parsedSelectedProducts)   
-            }else{
-                setSelectedProductsInCart(uniqueUserProducts)
-            }
+
+    const deleteItemInCart = async (id:number) => {
+        try{
+            const response = await deleteUniqueItemFromCart(userId, id)
+            removeUniqueProductFromLocalStorage(id)
+            location.reload()
+
+        }catch(error:any){
+            toast.error(`An error occured`)
         }
-        fetchData()
-    },[])
+    }
+
+    const removeUniqueProductFromLocalStorage = (id: number) => {
+        const storedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any);
+        const newData = storedSelectedProducts.filter((product:any) => product.productId !== id)
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(newData))
+    } 
+    React.useEffect(() => {
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart));
+    }, [selectedProductsInCart]);
+
 
   return (
     <div className='!h-screen fixed top-0 right-0 bg-white border z-50 w-96 px-4 py-3'>
@@ -102,7 +128,7 @@ const CartSidebar = ({toggleCart}: Props) => {
             <CartButton toggle={toggleCart}/>
         </div>
         <div className='overflow-y-auto h-full pb-28'>
-            <CartProducts toggle={toggleCart} addProductToCart={addProductToCart} subtractProductToCart={subtractProductToCart} updateProductQuantityInCart={updateProductQuantityInCart} productsInCart={productsInCart}/>
+            <CartProducts toggle={toggleCart} addProductToCart={addProductToCart} subtractProductToCart={subtractProductToCart} updateProductQuantityInCart={updateProductQuantityInCart} productsInCart={productsInCart} deleteItemInCart={deleteItemInCart}/>
            
         </div>
         <div className='absolute z-20 bottom-0 bg-white w-full pr-5 space-y-2'>
@@ -114,7 +140,7 @@ const CartSidebar = ({toggleCart}: Props) => {
                 <Link href={``}>View Cart</Link>
             </div>
             <div className='bg-green-500 text-white text-sm py-2 text-center rounded-md'>
-                <Link href={``}>Checkout</Link>
+                <Checkout productsIds={allProducts} userId={userId}/>
             </div>
         </div>
       

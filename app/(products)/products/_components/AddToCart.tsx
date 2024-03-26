@@ -18,9 +18,11 @@ const AddToCart = ({productId, quantity}: Props) => {
     const submitItemInCart = async () => {
         try{
             const response = await axios.post('/api/cart', {productId, userId, quantity})
-            toast.success(`${response.data.message}`)
+            toast.success(`Added`)
+            addUniqueProductToLocalStorage(response.data)
             location.reload()
         }catch(error:any){
+            console.error("error", error)
             toast.error(`${error.response.data.message}`)
         }
     }
@@ -29,11 +31,26 @@ const AddToCart = ({productId, quantity}: Props) => {
             console.log("data", productId, userId)
             const response = await deleteUniqueItemFromCart(userId, productId)
             toast.success(`${response}`)
+            removeUniqueProductFromLocalStorage(productId)
             location.reload()
         }catch(error:any){
             toast.error(`An error occured`)
         }
     }
+
+    const removeUniqueProductFromLocalStorage = (id: number) => {
+        const storedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any);
+        const newData = storedSelectedProducts.filter((product:any) => product.productId !== id)
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(newData))
+    } 
+    const addUniqueProductToLocalStorage = (newProduct: any) => {
+        const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
+        const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
+        parsedSelectedProducts.push(newProduct)
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(parsedSelectedProducts))
+    } 
+
+    
     React.useEffect(()=> {
         const fetchData = async () => {
             const response = await ifUSerhasProductInCart(userId, productId)

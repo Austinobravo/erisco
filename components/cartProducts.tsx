@@ -14,15 +14,16 @@ interface Props{
     addProductToCart: (id:number) => void
     subtractProductToCart: (id:number) => void
     updateProductQuantityInCart: (id:number) => number
+    deleteItemInCart: (id:number) => void
 }
-const CartProducts =  ({ toggle, productsInCart, addProductToCart, subtractProductToCart, updateProductQuantityInCart}: Props) => {
+const CartProducts =  ({ toggle, productsInCart, addProductToCart, subtractProductToCart, updateProductQuantityInCart, deleteItemInCart}: Props) => {
     
   return (
     <div className='overflow-y-auto h-full pb-28'>
             {productsInCart.length > 0 ?
                 productsInCart.map((product:any, index:any) => (
                     <div key={index} className='w-full border rounded-md p-2 my-5 space-y-3'>
-                        <div title='Delete' className='ml-auto w-fit cursor-pointer'>
+                        <div title='Delete' className='ml-auto w-fit cursor-pointer' onClick={()=> deleteItemInCart(product.id)}>
                             <X/>
                         </div>
                         <div className='flex items-center justify-between '>

@@ -1,9 +1,9 @@
-import Button from '@/components/Button'
+
 import { allProducts } from '@/lib/globals'
-import { ShoppingBag } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import AddToCart from '../../_components/AddToCart'
 
 const RelatedProducts = () => {
     // React.useEffect(()=> {
@@ -27,7 +27,7 @@ const RelatedProducts = () => {
                             <span className='text-blue-500'>N{product.currentPrice}.00</span>
                         </div>
                         <div>
-                            <Button href='' title='Add To Cart' icon={ShoppingBag} />
+                          <AddToCart productId={product.id} quantity={1}/>
 
                         </div>
                     </div>
