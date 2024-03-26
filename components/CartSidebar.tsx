@@ -112,6 +112,18 @@ const CartSidebar = ({toggleCart}: Props) => {
         const newData = storedSelectedProducts.filter((product:any) => product.productId !== id)
         localStorage.setItem("selectedProductsInCart", JSON.stringify(newData))
     } 
+
+    const productWithUpdatedPrice = productsInCart.map((product) => {
+        const localStorageProducts = parsedSelectedProducts.find((item:any) => item.productId === product.id)
+        if(localStorageProducts){
+            return {
+                ...product,
+                currentPrice: localStorageProducts.quantity * product.currentPrice
+            }
+        }else{
+            return product
+        }
+    })
     React.useEffect(() => {
         localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart));
     }, [selectedProductsInCart]);
@@ -136,7 +148,7 @@ const CartSidebar = ({toggleCart}: Props) => {
                 <Link href={``}>View Cart</Link>
             </div> */}
             <div className='bg-green-500 text-white text-sm py-2 text-center rounded-md'>
-                <Checkout productsIds={allProducts} userId={userId}/>
+                <Checkout productsIds={productWithUpdatedPrice} userId={userId}/>
             </div>
         </div>
       

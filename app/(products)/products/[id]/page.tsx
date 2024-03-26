@@ -19,10 +19,6 @@ const page = ({params}: {params:{id:string}}) => {
         return gottenProduct
     }
     const parsedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any) ;
-    const checkIfIdIsInLocalStorage = (id:number) => {
-        const gottenProduct = parsedSelectedProducts.find((eachProduct:any) => eachProduct.productId === id)
-        return gottenProduct
-    }
 
     const [selectedProductsInCart, setSelectedProductsInCart] = React.useState<any[]>(parsedSelectedProducts);
 
@@ -44,7 +40,6 @@ const page = ({params}: {params:{id:string}}) => {
         if(existingProduct === undefined){
             setSelectedProductsInCart(prevSelectedProductsInCart => [...prevSelectedProductsInCart, {id, quantity: 1} ])  
         }else{
-            console.log("console", selectedProductsInCart)
             setSelectedProductsInCart(prevSelectedProducts =>
                 prevSelectedProducts.map(product =>
                     product.productId === id ? {...product, quantity: product.quantity + 1} : product
@@ -104,13 +99,8 @@ const page = ({params}: {params:{id:string}}) => {
     const [productDetail, setProductDetail] = React.useState<any[]>([])
     React.useEffect(() => {
         const fetchData = () => {
-            const confirmIfIdIsInLocalStorage = checkIfIdIsInLocalStorage(productId)
-            if(confirmIfIdIsInLocalStorage === undefined){
-                const productDetail = getProductDataById(productId)
-                setProductDetail(productDetail)     
-            }else{
-                setProductDetail(productsInCart)    
-            }
+            const productDetail = getProductDataById(productId)
+            setProductDetail(productDetail)     
         }
         fetchData()
     },[])
@@ -138,15 +128,18 @@ const page = ({params}: {params:{id:string}}) => {
             </div>
             <div className='md:basis-1/2 space-y-5 pr-10'>
                 <h2 className='text-3xl font-bold'>{productDetail[0].title}</h2>
-                <div className='text-sm'>
-                    <span className='mr-1 line-through opacity-60'>{productDetail[0].previousPrice ? 'N' + productDetail[0].previousPrice.toFixed(2) : ''}</span>
+                <div className='text-sm space-x-2 item-center flex'>
+                    <span className='line-through opacity-60'>{productDetail[0].previousPrice ? 'N' + productDetail[0].previousPrice.toFixed(2) : ''}</span>
                     <span className='text-blue-500'>N{productDetail[0].currentPrice.toFixed(2)}</span>
+                    {isAdded && 
+                    <span className='text-[9px] bg-black text-white p-1 rounded-md'>N{updateProductQuantityInCart(productDetail[0].id) * productDetail[0].currentPrice?.toFixed(2)}</span>
+                    }
                 </div>
                 <div className='flex items-center gap-x-3'>
                     {isAdded && 
                         <div className=' space-x-2'>
                             <button className='border rounded-full px-1' onClick={()=>subtractProductToCart(productDetail[0].id)}>-</button>
-                            <span>{updateProductQuantityInCart(productDetail[0].id)} </span>
+                            <span>{updateProductQuantityInCart(productDetail[0].id)}</span>
                             <button className='border rounded-full px-1' onClick={()=>addProductToCart(productDetail[0].id)}>+</button>
                         </div>
                     }
