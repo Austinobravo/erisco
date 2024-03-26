@@ -28,8 +28,20 @@ const navLinks = [
 
 const DesktopNav = () => {
   const [isCartToggled, setIsCartToggled] = React.useState<boolean>(false)
+  const [totalNumberOfItemsInCart, setTotalNumberOfItemsInCart] = React.useState<number>(0)
   const pathname = usePathname()
   const {data:session} = useSession()
+
+
+  const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
+  const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
+  React.useEffect(()=>{
+    const fetchData = () => {
+      const totalValue = parsedSelectedProducts.map((value:any) => value.quantity).reduce((total:number, nextNumber:number) => total + nextNumber, 0)
+      setTotalNumberOfItemsInCart((prev)=> {return prev=totalValue})
+    }
+    fetchData()
+  },[parsedSelectedProducts,totalNumberOfItemsInCart]) 
   return (
     <>
       <div className='flex justify-between fixed bg-white z-20 px-10 w-full py-5 items-center'>
@@ -82,7 +94,7 @@ const DesktopNav = () => {
             }
             <div className='relative cursor-pointer' onClick={()=>setIsCartToggled(!isCartToggled)}>
               <ShoppingCart size={20}/>
-              <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>1</span>
+              <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>{totalNumberOfItemsInCart}</span>
             </div>
           </div>
 

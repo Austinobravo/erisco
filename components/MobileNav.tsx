@@ -32,6 +32,17 @@ const MobileNav = () => {
     const [isCartToggled, setIsCartToggled] = React.useState<boolean>(false)
     const pathname = usePathname()
     const {data:session} = useSession()
+    const [totalNumberOfItemsInCart, setTotalNumberOfItemsInCart] = React.useState<number>(0)
+
+    const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
+    const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
+    React.useEffect(()=>{
+      const fetchData = () => {
+        const totalValue = parsedSelectedProducts.map((value:any) => value.quantity).reduce((total:number, nextNumber:number) => total + nextNumber, 0)
+        setTotalNumberOfItemsInCart(totalValue)
+      }
+      fetchData()
+    },[parsedSelectedProducts,totalNumberOfItemsInCart]) 
 
   return (
     <>
@@ -54,7 +65,7 @@ const MobileNav = () => {
                     }
                     <div className='relative cursor-pointer' onClick={()=>setIsCartToggled(!isCartToggled)}>
                         <ShoppingCart size={20}/>
-                        <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>1</span>
+                        <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>{totalNumberOfItemsInCart}</span>
                     </div>
                 </div>
                 <div onClick={()=>setIsMenuToggled(!isMenuToggled)} className='cursor-pointer'>

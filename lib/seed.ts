@@ -12,7 +12,16 @@ async function main() {
             password: hashedPassword
         }
     })
-    console.log("newUser", newUser)
+    
+    // const newUser = await prisma.user.create({
+    //     data:{
+    //         username: "admin",
+    //         email: 'admin@gmail.com',
+    //         phone: 65942606,
+    //         password: hashedPassword
+    //     }
+    // })
+    // console.log("newUser", newUser)
 
 }
 main()

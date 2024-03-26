@@ -18,7 +18,6 @@ const CartSidebar = ({toggleCart}: Props) => {
     const userId = session?.user.id
     const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
     const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
-    const router = useRouter()
     const checkIfUserInLocalStorage = () => {
         const getUser = parsedSelectedProducts.find((user: { userId: number | undefined }) => user.userId === userId)
         if (getUser){
@@ -35,8 +34,6 @@ const CartSidebar = ({toggleCart}: Props) => {
      const updateProductQuantityInCart = (id:number) => {
         calculateTotalValueInUniqueProduct()
         const isProductInCart = findProductInCart(id)
-        console.log('prodcut', isProductInCart)
-        console.log('selected', selectedProductsInCart)
         return isProductInCart?.quantity
         
     }
@@ -83,11 +80,10 @@ const CartSidebar = ({toggleCart}: Props) => {
         return totalValue.toFixed(2)
     }
 
-     const calculateTotalItemsInCart = () => {
+     const calculateTotalAmountOfItemsInCart = () => {
         const totalAmount = selectedProductsInCart.map((product) => {
             const {quantity, productId} = product
             const uniqueProduct = productsInCart.find((product) => product.id === productId)
-            console.log('unique', uniqueProduct)
             return (
                 quantity * uniqueProduct?.currentPrice!
                 )
@@ -134,11 +130,11 @@ const CartSidebar = ({toggleCart}: Props) => {
         <div className='absolute z-20 bottom-0 bg-white w-full pr-5 space-y-2'>
             <div className='flex justify-between  items-center'>
                 <h3>Subtotal:</h3>
-                <p>N{calculateTotalItemsInCart()}</p>
+                <p>N{calculateTotalAmountOfItemsInCart()}</p>
             </div>
-            <div className='border-cyan-500 border text-sm  rounded-md py-2 text-center'>
+            {/* <div className='border-cyan-500 border text-sm  rounded-md py-2 text-center'>
                 <Link href={``}>View Cart</Link>
-            </div>
+            </div> */}
             <div className='bg-green-500 text-white text-sm py-2 text-center rounded-md'>
                 <Checkout productsIds={allProducts} userId={userId}/>
             </div>

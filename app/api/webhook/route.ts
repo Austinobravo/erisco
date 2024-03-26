@@ -1,6 +1,7 @@
 import Stripe  from 'stripe'
 import {headers} from "next/headers"
 import { NextResponse } from 'next/server'
+import prisma from "@/lib/prisma"
 const stripe =  new Stripe(process.env.STRIPE_API_KEY!, {apiVersion: '2023-10-16', typescript: true})
 
 export async function POST(req:Request){
@@ -28,9 +29,23 @@ export async function POST(req:Request){
             const jsonArray = JSON.parse(purchasedId)
             if(Array.isArray(jsonArray)){
                 for (const productId of jsonArray){
-                    
+                    await prisma.purchased.create({
+                        data:{
+                            isPaid:true,
+                            productId: productId,
+                            userId: userId
+                        }
+                    })
+                    await prisma.cart.deleteMany({
+                        where: {
+                            userId: userId,
+                            productId: productId
+                        }
+                    })
                 }
             }
         }
     }
+
+    return  NextResponse.json({message: "Paid"}, {status:200})
 }

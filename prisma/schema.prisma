@@ -32,11 +32,11 @@ model Cart {
   id Int @id @default(autoincrement())
   quantity Int 
   productId Int @unique
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  // product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   userId Int
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // createdAt DateTime @default(now())
+  //  updatedAt DateTime @updatedAt
 }
 
 model Product{
@@ -47,7 +47,7 @@ model Product{
    currentPrice Int
    details String
   
-   cart Cart[]
+  //  cart Cart[]
    purchased Purchased[]
    createdAt DateTime @default(now())
    updatedAt DateTime @updatedAt
