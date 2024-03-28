@@ -41,8 +41,14 @@ const DesktopNav = () => {
     const fetchData = async () => {
       const userProducts:any = await getAllProductsInUserCart(userId)
       typeof window !== 'undefined' ? localStorage.setItem('selectedProductsInCart', JSON.stringify(userProducts)) : null;
-      const totalValue = parsedSelectedProducts.map((value:any) => value.quantity).reduce((total:number, nextNumber:number) => total + nextNumber, 0)
-      setTotalNumberOfItemsInCart(totalValue)
+      console.log("user", userId)
+      
+      if(userId){
+        const totalValue = parsedSelectedProducts.map((value:any) => value.quantity).reduce((total:number, nextNumber:number) => total + nextNumber, 0)
+        setTotalNumberOfItemsInCart(totalValue)
+      }else{
+        typeof window !== 'undefined' ? localStorage.setItem('selectedProductsInCart', JSON.stringify([])) : null;
+      }
     }
     fetchData()
   },[parsedSelectedProducts,totalNumberOfItemsInCart]) 

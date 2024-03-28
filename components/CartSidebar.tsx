@@ -51,7 +51,7 @@ const CartSidebar = ({toggleCart}: Props) => {
                 )
             );
         }
-        console.log('add')
+        
         updateProductQuantityInCart(existingProduct.id)
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
         
@@ -68,7 +68,7 @@ const CartSidebar = ({toggleCart}: Props) => {
                 )
             );
         }
-        console.log('subtract')
+        
         updateProductQuantityInCart(existingProduct.id)
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
         
@@ -110,7 +110,6 @@ const CartSidebar = ({toggleCart}: Props) => {
     const removeUniqueProductFromLocalStorage = (id: number) => {
         const storedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any);
         const newData = storedSelectedProducts.filter((product:any) => product.productId !== id)
-        console.log('remove')
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(newData)) : null;
     } 
 
@@ -126,7 +125,7 @@ const CartSidebar = ({toggleCart}: Props) => {
         }
     })
     React.useEffect(() => {
-        console.log("in sidebar")
+        
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;;
     }, [selectedProductsInCart]);
 
