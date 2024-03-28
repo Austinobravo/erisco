@@ -17,12 +17,14 @@ const AddToCart = ({productId, quantity}: Props) => {
     const userId = session?.user.id
     const router = useRouter()
     const submitItemInCart = async () => {
+        console.log("product", productId)
         try{
             const response = await axios.post('/api/cart', {productId, userId, quantity})
             toast.success(`Added`)
             addUniqueProductToLocalStorage(response.data)
             location.reload()
         }catch(error:any){
+            console.error("error", error)
             toast.error(`${error.response.data.message}`)
             if(error.response.status === 401) return router.push('/login')
         }
@@ -43,25 +45,28 @@ const AddToCart = ({productId, quantity}: Props) => {
         const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
         const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
         const newData = parsedSelectedProducts.filter((product:any) => product.productId !== id)
+        console.log('remove')
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(newData)) : null;
     } 
     const addUniqueProductToLocalStorage = (newProduct: any) => {
         const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
         const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
         parsedSelectedProducts.push(newProduct)
+        console.log('add')
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(parsedSelectedProducts)) : null;
     } 
 
     
     React.useEffect(()=> {
         const fetchData = async () => {
+            console.log('user', userId)
             if(userId){
                 const response = await ifUSerhasProductInCart(userId, productId)
                 setIsAdded(response)
             }
         }
         fetchData()
-    },[])
+    },[userId])
   return (
     <div className='flex gap-x-1'>
         <button disabled={isAdded} className='disabled:opacity-50 disabled:!cursor-not-allowed'>

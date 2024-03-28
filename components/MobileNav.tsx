@@ -6,6 +6,7 @@ import React from 'react'
 import CartSidebar from './CartSidebar'
 import { usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
+import { getAllProductsInUserCart } from '@/lib/getDetails'
 
 
 const navLinks = [
@@ -32,17 +33,26 @@ const MobileNav = () => {
     const [isCartToggled, setIsCartToggled] = React.useState<boolean>(false)
     const pathname = usePathname()
     const {data:session} = useSession()
+    const userId = session?.user.id
     const [totalNumberOfItemsInCart, setTotalNumberOfItemsInCart] = React.useState<number>(0)
 
     const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
     const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
     React.useEffect(()=>{
-      const fetchData = () => {
+      const fetchData = async () => {
+        const userProducts:any = await getAllProductsInUserCart(userId)
+        typeof window !== 'undefined' ? localStorage.setItem('selectedProductsInCart', JSON.stringify(userProducts)) : null;  
         const totalValue = parsedSelectedProducts.map((value:any) => value.quantity).reduce((total:number, nextNumber:number) => total + nextNumber, 0)
         setTotalNumberOfItemsInCart(totalValue)
       }
       fetchData()
     },[parsedSelectedProducts,totalNumberOfItemsInCart]) 
+
+    const logOut = async () => {
+      await signOut({redirect:false, callbackUrl:'/'})
+      typeof window !== 'undefined' ? localStorage.setItem('selectedProductsInCart', JSON.stringify([])) : null;
+      window.location.reload()
+    }
 
   return (
     <>
@@ -54,7 +64,7 @@ const MobileNav = () => {
             <div className='flex gap-x-5'>
                 <div className='flex items-center gap-2 text-xs'>
                     {session?.user ?
-                      <div className='text-xs flex flex-col items-center cursor-pointer' onClick={()=>signOut({redirect:false, callbackUrl:'/'})}>
+                      <div className='text-xs flex flex-col items-center cursor-pointer' onClick={logOut}>
                         <LogOut color='red' size={10}/>
                         <span className='font-semibold'>{session.user.username}</span>      
                       </div>

@@ -48,6 +48,7 @@ const page = ({params}: {params:{id:string}}) => {
             );
         }
         updateProductQuantityInCart(existingProduct.id)
+        console.log('add')
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
         
     };
@@ -63,7 +64,7 @@ const page = ({params}: {params:{id:string}}) => {
                 )
             );
         }
-        
+        console.log('subtract')
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
         updateProductQuantityInCart(existingProduct.id)
         
@@ -95,6 +96,7 @@ const page = ({params}: {params:{id:string}}) => {
         const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
         const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
         const newData = parsedSelectedProducts.filter((product:any) => product.productId !== id)
+        console.log('remove')
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(newData)) : null;
     } 
 
@@ -117,6 +119,7 @@ const page = ({params}: {params:{id:string}}) => {
     },[])
 
     React.useEffect(() => { 
+        console.log("in product details")
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
     }, [selectedProductsInCart]);
 
