@@ -24,6 +24,10 @@ const usefulLinks = [
                 href: '',
                 name: 'Terms of Use'
             },
+            {
+                href: '/login',
+                name: 'Login'
+            },
         ]
     }
 ]

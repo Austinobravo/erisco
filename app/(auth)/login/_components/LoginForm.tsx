@@ -1,8 +1,8 @@
 'use client'
-import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2, Router } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 import toast from 'react-hot-toast'
 
@@ -11,6 +11,7 @@ const LoginForm = () => {
     const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false)
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl') || '/'
+    const router = useRouter()
     const submitLoginForm = async (event: React.FormEvent) => {
         event.preventDefault()
 
@@ -30,6 +31,7 @@ const LoginForm = () => {
             if(response?.error) return toast.error(response.error)
             if(response?.ok){
                 toast.success('Login Successful')
+                return router.push('/products')
             }
         }catch(error){
             toast.error(`${error}`)

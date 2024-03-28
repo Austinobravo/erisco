@@ -15,6 +15,7 @@ const AddToCart = ({productId, quantity}: Props) => {
     const [isAdded, setIsAdded] = React.useState<boolean>(false)
     const {data:session} = useSession()
     const userId = session?.user.id
+    const router = useRouter()
     const submitItemInCart = async () => {
         try{
             const response = await axios.post('/api/cart', {productId, userId, quantity})
@@ -22,8 +23,8 @@ const AddToCart = ({productId, quantity}: Props) => {
             addUniqueProductToLocalStorage(response.data)
             location.reload()
         }catch(error:any){
-            console.error("error", error)
             toast.error(`${error.response.data.message}`)
+            if(error.response.status === 401) return router.push('/login')
         }
     }
     const deleteItemInCart = async () => {
@@ -54,8 +55,10 @@ const AddToCart = ({productId, quantity}: Props) => {
     
     React.useEffect(()=> {
         const fetchData = async () => {
-            const response = await ifUSerhasProductInCart(userId, productId)
-            setIsAdded(response)
+            if(userId){
+                const response = await ifUSerhasProductInCart(userId, productId)
+                setIsAdded(response)
+            }
         }
         fetchData()
     },[])
