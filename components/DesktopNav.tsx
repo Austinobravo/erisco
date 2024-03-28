@@ -33,8 +33,8 @@ const DesktopNav = () => {
   const {data:session} = useSession()
 
 
-  const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
-  const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
+  const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
+  const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
   React.useEffect(()=>{
     const fetchData = () => {
       const totalValue = parsedSelectedProducts.map((value:any) => value.quantity).reduce((total:number, nextNumber:number) => total + nextNumber, 0)

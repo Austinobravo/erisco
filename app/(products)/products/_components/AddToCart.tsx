@@ -39,15 +39,16 @@ const AddToCart = ({productId, quantity}: Props) => {
     }
 
     const removeUniqueProductFromLocalStorage = (id: number) => {
-        const storedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any);
-        const newData = storedSelectedProducts.filter((product:any) => product.productId !== id)
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(newData))
+        const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
+        const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
+        const newData = parsedSelectedProducts.filter((product:any) => product.productId !== id)
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(newData)) : null;
     } 
     const addUniqueProductToLocalStorage = (newProduct: any) => {
-        const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
-        const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
+        const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
+        const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
         parsedSelectedProducts.push(newProduct)
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(parsedSelectedProducts))
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(parsedSelectedProducts)) : null;
     } 
 
     

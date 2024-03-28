@@ -16,7 +16,7 @@ const CartSidebar = ({toggleCart}: Props) => {
    
     const {data:session} = useSession()
     const userId = session?.user.id
-    const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
+    const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
     const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
     const checkIfUserInLocalStorage = () => {
         const getUser = parsedSelectedProducts.find((user: { userId: number | undefined }) => user.userId === userId)
@@ -53,7 +53,7 @@ const CartSidebar = ({toggleCart}: Props) => {
         }
         
         updateProductQuantityInCart(existingProduct.id)
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
         
     };
     
@@ -70,7 +70,7 @@ const CartSidebar = ({toggleCart}: Props) => {
         }
         
         updateProductQuantityInCart(existingProduct.id)
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
         
     
     }
@@ -110,7 +110,7 @@ const CartSidebar = ({toggleCart}: Props) => {
     const removeUniqueProductFromLocalStorage = (id: number) => {
         const storedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any);
         const newData = storedSelectedProducts.filter((product:any) => product.productId !== id)
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(newData))
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(newData)) : null;
     } 
 
     const productWithUpdatedPrice = productsInCart.map((product) => {
@@ -125,7 +125,7 @@ const CartSidebar = ({toggleCart}: Props) => {
         }
     })
     React.useEffect(() => {
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart));
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;;
     }, [selectedProductsInCart]);
 
 

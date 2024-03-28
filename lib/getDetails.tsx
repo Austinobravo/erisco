@@ -9,7 +9,6 @@ export const ifUSerhasProductInCart = async (userId:any, productId:number) => {
         
         }
     })
-    console.log('isadded', isAdded)
     return !!isAdded
 } 
 
@@ -21,7 +20,6 @@ export const getAllProductsInUserCart = async (userId:any) => {
         
         }
     })
-    console.log('isadded', uniqueUserProducts)
     return uniqueUserProducts
 } 
 export const deleteUniqueItemFromCart = async (userId:any, productId:number) => {

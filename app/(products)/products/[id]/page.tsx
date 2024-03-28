@@ -18,7 +18,8 @@ const page = ({params}: {params:{id:string}}) => {
         const gottenProduct = allProducts.filter(eachProductId => eachProductId.id === id)
         return gottenProduct
     }
-    const parsedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any) ;
+    const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
+    const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
 
     const [selectedProductsInCart, setSelectedProductsInCart] = React.useState<any[]>(parsedSelectedProducts);
 
@@ -47,7 +48,7 @@ const page = ({params}: {params:{id:string}}) => {
             );
         }
         updateProductQuantityInCart(existingProduct.id)
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
         
     };
     
@@ -63,7 +64,7 @@ const page = ({params}: {params:{id:string}}) => {
             );
         }
         
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
         updateProductQuantityInCart(existingProduct.id)
         
     
@@ -91,9 +92,10 @@ const page = ({params}: {params:{id:string}}) => {
     }
 
     const removeUniqueProductFromLocalStorage = (id: number) => {
-        const storedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any);
-        const newData = storedSelectedProducts.filter((product:any) => product.productId !== id)
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(newData))
+        const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
+        const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
+        const newData = parsedSelectedProducts.filter((product:any) => product.productId !== id)
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(newData)) : null;
     } 
 
     const [productDetail, setProductDetail] = React.useState<any[]>([])
@@ -114,8 +116,8 @@ const page = ({params}: {params:{id:string}}) => {
         fetchData()
     },[])
 
-    React.useEffect(() => {
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart));
+    React.useEffect(() => { 
+        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
     }, [selectedProductsInCart]);
 
 

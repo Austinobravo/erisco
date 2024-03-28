@@ -34,8 +34,8 @@ const MobileNav = () => {
     const {data:session} = useSession()
     const [totalNumberOfItemsInCart, setTotalNumberOfItemsInCart] = React.useState<number>(0)
 
-    const storedSelectedProducts = localStorage.getItem('selectedProductsInCart');
-    const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
+    const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
+    const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
     React.useEffect(()=>{
       const fetchData = () => {
         const totalValue = parsedSelectedProducts.map((value:any) => value.quantity).reduce((total:number, nextNumber:number) => total + nextNumber, 0)
