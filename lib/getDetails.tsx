@@ -2,13 +2,16 @@
 import prisma from '@/lib/prisma'
 export const ifUSerhasProductInCart = async (userId:any, productId:number) => {
 
+    console.log('id',productId)
+    console.log('user',userId)
     const isAdded = await prisma.cart.findUnique({
         where: {
-            userId,
-            productId
+            id:productId,
+            userId
         
         }
     })
+    console.log('add',isAdded)
     return !!isAdded
 } 
 
@@ -26,8 +29,8 @@ export const deleteUniqueItemFromCart = async (userId:any, productId:number) => 
     
     await prisma.cart.delete({
         where: {
-            userId,
-            productId
+            id:productId,
+            userId
         
         }
     })

@@ -37,7 +37,7 @@ export async function DELETE(req:Request){
     try{
          await prisma.cart.delete({
             where:{
-                productId,
+                id:productId,
                 userId,
                 quantity
             }

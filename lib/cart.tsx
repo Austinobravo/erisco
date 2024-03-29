@@ -1,7 +1,7 @@
 'use client'
 import { useSession } from "next-auth/react"
 import React, { createContext, useContext } from "react"
-import { getAllProductsInUserCart, ifUSerhasProductInCart } from "./getDetails"
+import { getAllProductsInUserCart } from "./getDetails"
 
 interface Props{
     selectedProductsInCart: any[]

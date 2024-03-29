@@ -1,6 +1,6 @@
 'use client'
 import Button from '@/components/Button'
-import { deleteUniqueItemFromCart, ifUSerhasProductInCart } from '@/lib/getDetails'
+import { deleteUniqueItemFromCart, getAllProductsInUserCart, ifUSerhasProductInCart } from '@/lib/getDetails'
 import axios from 'axios'
 import { ShoppingBag, Trash2 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
@@ -52,16 +52,30 @@ const AddToCart = ({productId, quantity}: Props) => {
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(parsedSelectedProducts)) : null;
     } 
 
-    
     React.useEffect(()=> {
         const fetchData = async () => {
             if(userId){
-                const response = await ifUSerhasProductInCart(userId, productId)
-                setIsAdded(response)
+                await getAllProductsInUserCart(userId)
+                .then((userItems) => {
+                    if (userItems.length > 0){
+                        const gottenItem = userItems.find((item) => item.productId === productId)
+                        if(gottenItem){
+                            return gottenItem?.id
+                        }else{
+                            return productId
+                        }
+                    }      
+                })
+                .then(async (productId:any)=> {
+                    const response = await ifUSerhasProductInCart(userId, productId)
+                    setIsAdded(response)
+                })
+
+
             }
         }
         fetchData()
-    },[])
+    },[userId])
   return (
     <div className='flex gap-x-1'>
         <button disabled={isAdded} className='disabled:opacity-50 disabled:!cursor-not-allowed'>

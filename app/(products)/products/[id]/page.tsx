@@ -5,7 +5,7 @@ import React from 'react'
 import RelatedProducts from './_components/RelatedProducts'
 import { allProducts } from '@/lib/globals'
 import AddToCart from '../_components/AddToCart'
-import { deleteUniqueItemFromCart, ifUSerhasProductInCart } from '@/lib/getDetails'
+import { deleteUniqueItemFromCart, getAllProductsInUserCart, ifUSerhasProductInCart } from '@/lib/getDetails'
 import { useSession } from 'next-auth/react'
 import toast from 'react-hot-toast'
 
@@ -18,7 +18,7 @@ const page = ({params}: {params:{id:string}}) => {
         const gottenProduct = allProducts.filter(eachProductId => eachProductId.id === id)
         return gottenProduct
     }
-    const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
+    const storedSelectedProducts = localStorage.getItem('selectedProductsInCart') 
     const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
 
     const [selectedProductsInCart, setSelectedProductsInCart] = React.useState<any[]>(parsedSelectedProducts);
@@ -48,7 +48,7 @@ const page = ({params}: {params:{id:string}}) => {
             );
         }
         updateProductQuantityInCart(existingProduct.id)
-        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
         
     };
     
@@ -110,14 +110,31 @@ const page = ({params}: {params:{id:string}}) => {
     const [isAdded,setIsAdded] = React.useState<boolean>(false)
     React.useEffect(()=> {
         const fetchData = async () => {
-            const response = await ifUSerhasProductInCart(userId, productId)
-            setIsAdded(response)
+            if(userId){
+                await getAllProductsInUserCart(userId)
+                .then((userItems) => {
+                    if (userItems.length > 0){
+                        const gottenItem = userItems.find((item) => item.productId === productId)
+                        if(gottenItem){
+                            return gottenItem?.id
+                        }else{
+                            return productId
+                        }
+                    }      
+                })
+                .then(async (productId:any)=> {
+                    const response = await ifUSerhasProductInCart(userId, productId)
+                    setIsAdded(response)
+                })
+
+
+            }
         }
         fetchData()
-    },[])
+    },[userId])
 
     React.useEffect(() => { 
-        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) : null;
+        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
     }, [selectedProductsInCart]);
 
 

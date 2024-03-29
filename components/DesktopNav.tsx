@@ -35,23 +35,30 @@ const DesktopNav = () => {
   const userId = session?.user.id
 
 
-  const storedSelectedProducts = typeof window !== 'undefined' ? localStorage.getItem('selectedProductsInCart') : null;
+  const storedSelectedProducts = localStorage.getItem('selectedProductsInCart') 
   const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
-  React.useEffect(()=>{
+  React.useEffect(() => {
     const fetchData = async () => {
-      const userProducts:any = await getAllProductsInUserCart(userId)
-      typeof window !== 'undefined' ? localStorage.setItem('selectedProductsInCart', JSON.stringify(userProducts)) : null;
-      console.log("user", userId)
-      
-      if(userId){
-        const totalValue = parsedSelectedProducts.map((value:any) => value.quantity).reduce((total:number, nextNumber:number) => total + nextNumber, 0)
-        setTotalNumberOfItemsInCart(totalValue)
-      }else{
-        typeof window !== 'undefined' ? localStorage.setItem('selectedProductsInCart', JSON.stringify([])) : null;
+      let userProducts;
+      if (userId) {
+        // If userId is defined, fetch data from the server
+        userProducts = await getAllProductsInUserCart(userId);
+        localStorage.setItem('selectedProductsInCart', JSON.stringify(userProducts));
+      } else if (localStorage.getItem('selectedProductsInCart')) {
+        // If userId is undefined, fetch data from localStorage if available
+        userProducts = JSON.parse(localStorage.getItem('selectedProductsInCart')!);
       }
-    }
-    fetchData()
-  },[parsedSelectedProducts,totalNumberOfItemsInCart]) 
+  
+      if (userProducts) {
+        // Calculate totalValue based on the fetched data
+        const totalValue = userProducts.reduce((total: number, nextProduct: any) => total + nextProduct.quantity, 0);
+        setTotalNumberOfItemsInCart(totalValue);
+      }
+    };
+  
+    fetchData();
+  }, [userId, parsedSelectedProducts]); // Fetch data only when userId changes
+   
 
   const logOut = async () => {
     await signOut({redirect:false, callbackUrl:'/'})
