@@ -1,5 +1,6 @@
 'use client'
 import Button from '@/components/Button'
+import uniqueCart from '@/hooks/useCart'
 import { deleteUniqueItemFromCart, getAllProductsInUserCart, ifUSerhasProductInCart } from '@/lib/getDetails'
 import axios from 'axios'
 import { ShoppingBag, Trash2 } from 'lucide-react'
@@ -7,12 +8,22 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import toast from 'react-hot-toast'
-interface Props{
-    productId: number
-    quantity: number
+
+interface CartItem {
+    item: ProductType
+    quantity: 1
 }
-const AddToCart = ({productId, quantity}: Props) => {
-    const [isAdded, setIsAdded] = React.useState<boolean>(false)
+
+interface Props{
+    product: CartItem
+    addToCartFunction: (data: CartItem) => void
+    removeFromCartFunction: (id: number) => void
+    isAdded: (id:number) => boolean
+}
+const AddToCart = ({product, addToCartFunction, removeFromCartFunction, isAdded}: Props) => {
+    // const [isAdded, setIsAdded] = React.useState<boolean>(false)
+    const productId = 1
+    const quantity= 1
     const {data:session} = useSession()
     const userId = session?.user.id
     const router = useRouter()
@@ -68,7 +79,7 @@ const AddToCart = ({productId, quantity}: Props) => {
                 })
                 .then(async (productId:any)=> {
                     const response = await ifUSerhasProductInCart(userId, productId)
-                    setIsAdded(response)
+                    // setIsAdded(response)
                 })
 
 
@@ -78,12 +89,12 @@ const AddToCart = ({productId, quantity}: Props) => {
     },[userId])
   return (
     <div className='flex gap-x-1'>
-        <button disabled={isAdded} className='disabled:opacity-50 disabled:!cursor-not-allowed'>
-            <Button href='' title={isAdded ? 'Added' : 'Add to cart'} icon={ShoppingBag} onClick={submitItemInCart} />
+        <button disabled={isAdded(product.item.id)} className='disabled:opacity-50 disabled:!cursor-not-allowed'>
+            <Button href='' title={isAdded(product.item.id) ? 'Added' : 'Add to cart'} icon={ShoppingBag} onClick={()=>addToCartFunction(product)} />
         </button>
-        {isAdded && 
+        {isAdded(product.item.id) && 
         <button className='underline text-red-500'>
-            <Button href='' title={`Remove`} icon={Trash2} onClick={deleteItemInCart} bgColor='bg-red-500' />
+            <Button href='' title={`Remove`} icon={Trash2} onClick={()=> removeFromCartFunction(product.item.id)} bgColor='bg-red-500'/>
         </button>
         }
 

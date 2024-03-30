@@ -8,6 +8,7 @@ import AddToCart from '../_components/AddToCart'
 import { deleteUniqueItemFromCart, getAllProductsInUserCart, ifUSerhasProductInCart } from '@/lib/getDetails'
 import { useSession } from 'next-auth/react'
 import toast from 'react-hot-toast'
+import uniqueCart from '@/hooks/useCart'
 
 const page = ({params}: {params:{id:string}}) => {
     const {data:session} = useSession()
@@ -107,6 +108,7 @@ const page = ({params}: {params:{id:string}}) => {
         fetchData()
     },[])
 
+    const cart = uniqueCart()
     const [isAdded,setIsAdded] = React.useState<boolean>(false)
     React.useEffect(()=> {
         const fetchData = async () => {
@@ -162,7 +164,7 @@ const page = ({params}: {params:{id:string}}) => {
                             <button className='border rounded-full px-1' onClick={()=>addProductToCart(productDetail[0].id)}>+</button>
                         </div>
                     }
-                    <AddToCart productId={productDetail[0].id} quantity={1}/>
+                    <AddToCart product={productDetail[0]} addToCartFunction={cart.addItem}  removeFromCartFunction={cart.removeItem} isAdded={cart.confirmIfItemInCart}/>
                 </div>
                 <div>
                     <p className='leading-relaxed'>{productDetail[0].details}.</p>
