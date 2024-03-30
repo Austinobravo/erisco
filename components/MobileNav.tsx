@@ -7,6 +7,7 @@ import CartSidebar from './CartSidebar'
 import { usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 import { getAllProductsInUserCart } from '@/lib/getDetails'
+import uniqueCart from '@/hooks/useCart'
 
 
 const navLinks = [
@@ -66,6 +67,8 @@ const MobileNav = () => {
       window.location.reload()
     }
 
+    const cart = uniqueCart()
+
   return (
     <>
     <div className='px-10 py-5 fixed top-0 bg-white z-20 w-full '>
@@ -87,7 +90,7 @@ const MobileNav = () => {
                     }
                     <div className='relative cursor-pointer' onClick={()=>setIsCartToggled(!isCartToggled)}>
                         <ShoppingCart size={20}/>
-                        <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>{totalNumberOfItemsInCart}</span>
+                        <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>{cart.cartItems.length}</span>
                     </div>
                 </div>
                 <div onClick={()=>setIsMenuToggled(!isMenuToggled)} className='cursor-pointer'>

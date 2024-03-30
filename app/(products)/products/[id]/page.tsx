@@ -16,7 +16,7 @@ const page = ({params}: {params:{id:string}}) => {
 
     const productId = parseInt(params.id)
     const getProductDataById = (id:number) =>{
-        const gottenProduct = allProducts.filter(eachProductId => eachProductId.id === id)
+        const gottenProduct = allProducts.find(eachProductId => eachProductId.id === id)
         return gottenProduct
     }
     const storedSelectedProducts = localStorage.getItem('selectedProductsInCart') 
@@ -26,16 +26,7 @@ const page = ({params}: {params:{id:string}}) => {
 
     const productsInCart = allProducts.filter((product) => selectedProductsInCart.find((cartProduct) => product.id === cartProduct.productId))
 
-     const updateProductQuantityInCart = (id:number) => {
-        calculateTotalValueInUniqueProduct()
-        const isProductInCart = findProductInCart(id)
-        if(isProductInCart){
-            return isProductInCart?.quantity
-        }else{
-            return 1
-        }
-        
-    }
+     
 
     const addProductToCart = (id:number) => {
         const existingProduct = findProductInCart(id)
@@ -99,75 +90,55 @@ const page = ({params}: {params:{id:string}}) => {
         typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(newData)) : null;
     } 
 
-    const [productDetail, setProductDetail] = React.useState<any[]>([])
+    const [productDetail, setProductDetail] = React.useState({} as ProductType)
     React.useEffect(() => {
         const fetchData = () => {
             const productDetail = getProductDataById(productId)
-            setProductDetail(productDetail)     
+            setProductDetail(productDetail as ProductType)     
         }
         fetchData()
     },[])
-
+    
     const cart = uniqueCart()
-    const [isAdded,setIsAdded] = React.useState<boolean>(false)
-    React.useEffect(()=> {
-        const fetchData = async () => {
-            if(userId){
-                await getAllProductsInUserCart(userId)
-                .then((userItems) => {
-                    if (userItems.length > 0){
-                        const gottenItem = userItems.find((item) => item.productId === productId)
-                        if(gottenItem){
-                            return gottenItem?.id
-                        }else{
-                            return productId
-                        }
-                    }      
-                })
-                .then(async (productId:any)=> {
-                    const response = await ifUSerhasProductInCart(userId, productId)
-                    setIsAdded(response)
-                })
-
-
-            }
+    const updateProductQuantityInCart = (id:number) => {
+        const gottenItem =  cart.cartItems.find((cartItem) => cartItem.item.id === id )
+        if(gottenItem){
+            return gottenItem.quantity
+        } else{
+            return 1
         }
-        fetchData()
-    },[userId])
-
-    React.useEffect(() => { 
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
-    }, [selectedProductsInCart]);
-
-
+        
+    }
+    
   return (
     <section className='py-7'>
-        {productDetail.length > 0 ? 
+        {Object.entries(productDetail).length > 0 ? 
         <div className='flex px-10 gap-10 md:flex-nowrap flex-wrap'>
             <div className='md:basis-1/2 w-full'>
-                <Image src={productDetail[0].image} width={500} height={100} alt='product' className='w-full'/>
+                <Image src={productDetail.image} width={500} height={100} alt='product' className='w-full'/>
             </div>
             <div className='md:basis-1/2 space-y-5 pr-10'>
-                <h2 className='text-3xl font-bold'>{productDetail[0].title}</h2>
+                <h2 className='text-3xl font-bold'>{productDetail.title}</h2>
                 <div className='text-sm space-x-2 item-center flex'>
-                    <span className='line-through opacity-60'>{productDetail[0].previousPrice ? 'N' + productDetail[0].previousPrice.toFixed(2) : ''}</span>
-                    <span className='text-blue-500'>N{productDetail[0].currentPrice.toFixed(2)}</span>
-                    {isAdded && 
-                    <span className='text-[9px] bg-black text-white p-1 rounded-md'>N{updateProductQuantityInCart(productDetail[0].id) * productDetail[0].currentPrice?.toFixed(2)}</span>
+                    <span className='line-through opacity-60'>{productDetail.previousPrice ? 'N' + productDetail.previousPrice.toFixed(2) : ''}</span>
+                    <span className='text-blue-500'>N{productDetail.currentPrice.toFixed(2)}</span>
+                    {cart.confirmIfItemInCart(productDetail.id) && 
+                    <span className='text-[9px] bg-black text-white p-1 rounded-md'>N{Number(updateProductQuantityInCart(productDetail.id)) * Number(productDetail.currentPrice.toFixed(2))}</span>
                     }
                 </div>
                 <div className='flex items-center gap-x-3'>
-                    {isAdded && 
+                    {cart.confirmIfItemInCart(productDetail.id) && 
                         <div className=' space-x-2'>
-                            <button className='border rounded-full px-1' onClick={()=>subtractProductToCart(productDetail[0].id)}>-</button>
-                            <span>{updateProductQuantityInCart(productDetail[0].id)}</span>
-                            <button className='border rounded-full px-1' onClick={()=>addProductToCart(productDetail[0].id)}>+</button>
+                            <button className='border rounded-full px-1' onClick={()=>cart.decreaseQuantity(productDetail.id)}>-</button>
+                            <span>{cart.getCurrentQuantity(productDetail.id)}</span>
+                            <button className='border rounded-full px-1' onClick={()=>cart.increaseQuantity(productDetail.id)}>+</button>
                         </div>
                     }
-                    <AddToCart product={productDetail[0]} addToCartFunction={cart.addItem}  removeFromCartFunction={cart.removeItem} isAdded={cart.confirmIfItemInCart}/>
+                    
+                    <AddToCart product={productDetail} quantity={1} addToCartFunction={cart.addItem}  removeFromCartFunction={cart.removeItem} isAdded={cart.confirmIfItemInCart}/>
                 </div>
                 <div>
-                    <p className='leading-relaxed'>{productDetail[0].details}.</p>
+                    <p className='leading-relaxed'>{productDetail.details}.</p>
                 </div>
             </div>
         

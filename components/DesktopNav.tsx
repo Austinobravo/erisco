@@ -7,6 +7,7 @@ import CartSidebar from './CartSidebar'
 import { usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 import { getAllProductsInUserCart } from '@/lib/getDetails'
+import uniqueCart from '@/hooks/useCart'
 
 const navLinks = [
   {
@@ -33,6 +34,8 @@ const DesktopNav = () => {
   const pathname = usePathname()
   const {data:session} = useSession()
   const userId = session?.user.id
+
+  const cart = uniqueCart()
 
 
   const storedSelectedProducts = localStorage.getItem('selectedProductsInCart') 
@@ -117,7 +120,7 @@ const DesktopNav = () => {
             }
             <div className='relative cursor-pointer' onClick={()=>setIsCartToggled(!isCartToggled)}>
               <ShoppingCart size={20}/>
-              <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>{totalNumberOfItemsInCart}</span>
+              <span className='absolute top-0 right-0 -mt-2 -mr-2 px-1 bg-green-500 rounded-full text-white text-xs font-bold'>{cart.cartItems.length}</span>
             </div>
           </div>
 

@@ -1,3 +1,5 @@
+
+import { allProducts } from '@/lib/globals'
 import React from 'react'
 import toast from 'react-hot-toast'
 import { create } from 'zustand'
@@ -9,13 +11,14 @@ interface CartItem {
 }
 interface CartStore {
     cartItems: CartItem[]
-    
     addItem: (item:CartItem) => void
     removeItem: (id:number) => void
     increaseQuantity: (id:number) => void
     decreaseQuantity: (id:number) => void
     clearCart: () => void
     confirmIfItemInCart: (id: number) => boolean
+    getCurrentQuantity: (id: number) => number
+    totalAmountOfItemsInCart: () => number
 }
 const uniqueCart = create(persist<CartStore>( (set,get) => ({
     cartItems: [],
@@ -28,6 +31,7 @@ const uniqueCart = create(persist<CartStore>( (set,get) => ({
         }
 
         set({cartItems: [...currentItems,{item,quantity}]})
+        console.log("items", currentItems)
         toast.success("Added")
     },
     removeItem(id:number) {
@@ -43,7 +47,7 @@ const uniqueCart = create(persist<CartStore>( (set,get) => ({
     },
     decreaseQuantity(id:number){
         const currentItems = get().cartItems
-        const newCartData = currentItems.map((cartItem)=> cartItem.item.id === id ? {...cartItem, quantity: cartItem.quantity - 1}: cartItem)
+        const newCartData = currentItems.map((cartItem)=> cartItem.item.id === id ? {...cartItem, quantity: cartItem.quantity > 1 ? cartItem.quantity - 1 : 1}: cartItem)
         set({cartItems: newCartData})
     },
     clearCart(){
@@ -51,9 +55,44 @@ const uniqueCart = create(persist<CartStore>( (set,get) => ({
     },
     confirmIfItemInCart(id:number){
         const currentItems = get().cartItems
-        const newCartData = currentItems.find((cartItem)=> cartItem.item.id === id )
-        return !!newCartData
+        if (currentItems.length > 0){
+            const newCartData = currentItems.find((cartItem)=> cartItem.item.id === id )
+            return !!newCartData
+        }
+        return false
         
+    },
+    getCurrentQuantity(id:number){
+        const currentItems = get().cartItems
+        if (currentItems.length > 0){
+            const gottenItem =  currentItems.find((cartItem) => cartItem.item.id === id )
+            if(gottenItem){
+                return gottenItem.quantity
+            } else{
+                return 1
+            }
+        }
+        else{
+            return 1
+        }
+
+        
+    },
+    totalAmountOfItemsInCart() {
+        const currentItems = get().cartItems
+        if (currentItems.length > 0){
+            const totalAmount = currentItems.map((product) => {
+                const {quantity, item} = product
+                const uniqueProduct = allProducts.find((product) => product.id === item.id)
+                return (
+                    quantity * uniqueProduct?.currentPrice!
+                    )
+                }).reduce((total, nextNumber) => total + nextNumber,0)
+
+            return totalAmount
+        }else{
+            return 0
+        }
     }
     
 }),

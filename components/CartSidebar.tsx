@@ -8,6 +8,7 @@ import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import Checkout from './Checkout'
+import uniqueCart from '@/hooks/useCart'
 interface Props{
     toggleCart: () => void
 }
@@ -16,104 +17,12 @@ const CartSidebar = ({toggleCart}: Props) => {
    
     const {data:session} = useSession()
     const userId = session?.user.id
-    const storedSelectedProducts = localStorage.getItem('selectedProductsInCart')
-    const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
-    const checkIfUserInLocalStorage = () => {
-        const getUser = parsedSelectedProducts.find((user: { userId: number | undefined }) => user.userId === userId)
-        if (getUser){
-            return parsedSelectedProducts
-        }else{
-            return []
-        }
-        
-    }
-    const [selectedProductsInCart, setSelectedProductsInCart] = React.useState<any[]>(checkIfUserInLocalStorage());
-
-    const productsInCart = allProducts.filter((product) => selectedProductsInCart.find((cartProduct) => product.id === cartProduct.productId))
-
-     const updateProductQuantityInCart = (id:number) => {
-        calculateTotalValueInUniqueProduct()
-        const isProductInCart = findProductInCart(id)
-        return isProductInCart?.quantity
-        
-    }
-
-    const addProductToCart = (id:number) => {
-        const existingProduct = findProductInCart(id)
-        
-        if(existingProduct === undefined){
-            setSelectedProductsInCart(prevSelectedProducts => [...prevSelectedProducts, {id, quantity: 1} ])
-            
-        }else{
-            setSelectedProductsInCart(prevSelectedProducts =>
-                prevSelectedProducts.map(product =>
-                    product.productId === id ? {...product, quantity: product.quantity + 1} : product
-                )
-            );
-        }
-        
-        updateProductQuantityInCart(existingProduct.id)
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
-    };
     
-    const subtractProductToCart = (id:number) => {
-        const existingProduct= findProductInCart(id)
-        if (existingProduct.quantity <= 1){
-            deleteItemInCart(id)
-        }else{
-            setSelectedProductsInCart(prevSelectedProducts =>
-                prevSelectedProducts.map(product =>
-                    product.productId === id ? {...product, quantity: product.quantity - 1} : product
-                )
-            );
-        }
-        
-        updateProductQuantityInCart(existingProduct.id)
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart))
-        
     
-    }
-    
-     const calculateTotalValueInUniqueProduct = () => {
-         const totalValue = productsInCart.map((product) => product.currentPrice).reduce((total, nextNumber) => nextNumber + total, 0)
-        return totalValue.toFixed(2)
-    }
-
-     const calculateTotalAmountOfItemsInCart = () => {
-        const totalAmount = selectedProductsInCart.map((product) => {
-            const {quantity, productId} = product
-            const uniqueProduct = productsInCart.find((product) => product.id === productId)
-            return (
-                quantity * uniqueProduct?.currentPrice!
-                )
-            }).reduce((total, nextNumber) => total + nextNumber,0)
-
-        return totalAmount.toFixed(2)
-    }
-    
-     const findProductInCart = (id:number) =>{
-        return selectedProductsInCart.find((eachProduct) => eachProduct.productId === id)
-    }
-
-    const deleteItemInCart = async (id:number) => {
-        try{
-            const response = await deleteUniqueItemFromCart(userId, id)
-            removeUniqueProductFromLocalStorage(id)
-            location.reload()
-
-        }catch(error:any){
-            toast.error(`An error occured`)
-        }
-    }
-
-    const removeUniqueProductFromLocalStorage = (id: number) => {
-        const storedSelectedProducts = JSON.parse(localStorage.getItem('selectedProductsInCart') as any);
-        const newData = storedSelectedProducts.filter((product:any) => product.productId !== id)
-        typeof window !== 'undefined' ? localStorage.setItem("selectedProductsInCart", JSON.stringify(newData)) : null;
-    } 
-
+    const cart = uniqueCart()
+    const productsInCart = allProducts.filter((product) => cart.cartItems.find((cartProduct) => product.id === cartProduct.item.id))
     const productWithUpdatedPrice = productsInCart.map((product) => {
-        const localStorageProducts = parsedSelectedProducts.find((item:any) => item.productId === product.id)
+        const localStorageProducts = cart.cartItems.find((item:any) => item.item.id === product.id)
         if(localStorageProducts){
             return {
                 ...product,
@@ -123,9 +32,6 @@ const CartSidebar = ({toggleCart}: Props) => {
             return product
         }
     })
-    React.useEffect(() => {
-        localStorage.setItem("selectedProductsInCart", JSON.stringify(selectedProductsInCart)) 
-    }, [selectedProductsInCart]);
 
 
   return (
@@ -135,13 +41,13 @@ const CartSidebar = ({toggleCart}: Props) => {
             <CartButton toggle={toggleCart}/>
         </div>
         <div className='overflow-y-auto h-full pb-28'>
-            <CartProducts toggle={toggleCart} addProductToCart={addProductToCart} subtractProductToCart={subtractProductToCart} updateProductQuantityInCart={updateProductQuantityInCart} productsInCart={productsInCart} deleteItemInCart={deleteItemInCart}/>
+            <CartProducts toggle={toggleCart} addProductToCart={cart.increaseQuantity} subtractProductToCart={cart.decreaseQuantity} updateProductQuantityInCart={cart.getCurrentQuantity} productsInCart={cart.cartItems} deleteItemInCart={cart.removeItem}/>
            
         </div>
         <div className='absolute z-20 bottom-0 bg-white w-full pr-5 space-y-2'>
             <div className='flex justify-between  items-center'>
                 <h3>Subtotal:</h3>
-                <p>N{calculateTotalAmountOfItemsInCart()}</p>
+                <p>N{(cart.totalAmountOfItemsInCart()).toFixed(2)}</p>
             </div>
             {/* <div className='border-cyan-500 border text-sm  rounded-md py-2 text-center'>
                 <Link href={``}>View Cart</Link>

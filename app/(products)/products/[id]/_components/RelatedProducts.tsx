@@ -4,11 +4,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import AddToCart from '../../_components/AddToCart'
+import uniqueCart from '@/hooks/useCart'
 
 const RelatedProducts = () => {
-    // React.useEffect(()=> {
-
-    // },[])
+   const cart = uniqueCart()
   return (
     <section >
       <h4 className='py-3 font-bold text-center'>Related Products</h4>
@@ -27,7 +26,7 @@ const RelatedProducts = () => {
                             <span className='text-blue-500'>N{product.currentPrice}.00</span>
                         </div>
                         <div>
-                          <AddToCart productId={product.id} quantity={1}/>
+                        <AddToCart product={product as ProductType} quantity={1} addToCartFunction={cart.addItem}  removeFromCartFunction={cart.removeItem} isAdded={cart.confirmIfItemInCart}/>
 
                         </div>
                     </div>
