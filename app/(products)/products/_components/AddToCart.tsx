@@ -1,13 +1,8 @@
 'use client'
 import Button from '@/components/Button'
-import uniqueCart from '@/hooks/useCart'
-import { deleteUniqueItemFromCart, getAllProductsInUserCart, ifUSerhasProductInCart } from '@/lib/getDetails'
-import axios from 'axios'
 import { ShoppingBag, Trash2 } from 'lucide-react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+
 import React from 'react'
-import toast from 'react-hot-toast'
 
 interface CartItem {
     item: ProductType

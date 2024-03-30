@@ -37,35 +37,8 @@ const DesktopNav = () => {
 
   const cart = uniqueCart()
 
-
-  const storedSelectedProducts = localStorage.getItem('selectedProductsInCart') 
-  const parsedSelectedProducts = storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];;
-  React.useEffect(() => {
-    const fetchData = async () => {
-      let userProducts;
-      if (userId) {
-        // If userId is defined, fetch data from the server
-        userProducts = await getAllProductsInUserCart(userId);
-        localStorage.setItem('selectedProductsInCart', JSON.stringify(userProducts));
-      } else if (localStorage.getItem('selectedProductsInCart')) {
-        // If userId is undefined, fetch data from localStorage if available
-        userProducts = JSON.parse(localStorage.getItem('selectedProductsInCart')!);
-      }
-  
-      if (userProducts) {
-        // Calculate totalValue based on the fetched data
-        const totalValue = userProducts.reduce((total: number, nextProduct: any) => total + nextProduct.quantity, 0);
-        setTotalNumberOfItemsInCart(totalValue);
-      }
-    };
-  
-    fetchData();
-  }, [userId, parsedSelectedProducts]); // Fetch data only when userId changes
-   
-
   const logOut = async () => {
     await signOut({redirect:false, callbackUrl:'/'})
-    typeof window !== 'undefined' ? localStorage.setItem('selectedProductsInCart', JSON.stringify([])) : null;
     window.location.reload()
   }
   return (

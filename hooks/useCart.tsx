@@ -1,6 +1,5 @@
 
 import { allProducts } from '@/lib/globals'
-import React from 'react'
 import toast from 'react-hot-toast'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
