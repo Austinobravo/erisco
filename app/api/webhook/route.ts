@@ -22,8 +22,10 @@ export async function POST(req:Request){
         const paymentIntentSucceded = event.data.object
 
         const purchasedId = session?.metadata?.productIds
-
+ 
         const userId = parseInt(session?.metadata?.userId as string)
+
+        
 
         if(purchasedId){
             const jsonArray = JSON.parse(purchasedId)

@@ -1,4 +1,3 @@
-import { allProducts } from '@/lib/globals'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
@@ -20,9 +19,6 @@ export async function POST(req:Request){
     if (!productIds || productIds.length === 0) {
         return NextResponse.json({message:"Product ids not found"}, { status: 400 });
     }
-    console.log("product", productIds)
-
-    // const products = allProducts.filter((product) => productIds.find((productId:any) => productId.id === product.id))
 
     if (productIds.length === 0) {
         return NextResponse.json({message:"No matching products found"}, { status: 400 });
@@ -57,7 +53,8 @@ export async function POST(req:Request){
             metadata:{
                 productIds:JSON.stringify(productIds.map((product:any) => product.id)),
                 userId: userId
-            }
+            },
+            client_reference_id: userId
         })
         return NextResponse.json({url:session.url}, {headers:corsHeader})
 
